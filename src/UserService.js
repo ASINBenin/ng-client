@@ -19,7 +19,7 @@
     self.isLoggingOut = false;
     self.permissionGroups = [];
 
-    var reauthenticate = function () {
+    var reauthenticate = function (promise) {
       if (localStorageService.get('auth_token') != null) {
         self.authenticated = true;
         self.token = localStorageService.get('auth_token');
@@ -27,10 +27,13 @@
         self.permissionGroups = JSON.parse(localStorageService.get('permission_groups'));
         self.uiLanguage = localStorageService.get('uiLanguage');
 
-        updateRoles();
+        updateRoles(promise);
 
         return true;
       } else {
+        if (promise) {
+          promise.reject(false);
+        }
         return false;
       }
     };
@@ -73,11 +76,6 @@
 
     /**
     * Authenticates the user against the backend authentication API
-    * @param login The username
-    * @param password The password
-    * @param otp The one-time assword
-    * @param recoveryCode The one-time assword
-    * @returns Promise
     */
     var authenticate = function (login, password, otp, recoveryCode, verificationCode) {
       var promise = $q.defer();
@@ -145,6 +143,19 @@
         }
       );
 
+      return promise.promise;
+    };
+
+    var authenticateWithToken = function (token, uid) {
+      var promise = $q.defer();
+      self.authenticated = true;
+      self.token = token;
+      self.uid = uid;
+      localStorageService.set('auth_token', token);
+      localStorageService.set('uid', uid);
+      localStorageService.set('permission_groups', JSON.stringify([]));
+      
+      updateRoles(promise);
       return promise.promise;
     };
 
@@ -219,6 +230,7 @@
     return {
       reauthenticate: reauthenticate,
       authenticate: authenticate,
+      authenticateWithToken: authenticateWithToken,
       logout: logout,
       getToken: getToken,
       getUserId: getUserId,

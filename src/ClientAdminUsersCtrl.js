@@ -148,6 +148,24 @@
                 );
             });
         };
+
+        $scope.manageUserIdentity = function(ev, user) {
+            var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'));
+
+            $mdDialog.show({
+                controller: ['$scope', '$mdDialog', 'ClientUsersService', 'toastr', 'gettextCatalog', 'targetUser', ManageUserIdentityDialogCtrl],
+                templateUrl: 'views/dialogs/manage.identity.dialog.html',
+                targetEvent: ev,
+                scope: $scope.$dialogScope.$new(),
+                clickOutsideToClose: false,
+                fullscreen: useFullScreen,
+                locals: {
+                    'targetUser': user
+                }
+            }).then(function() {
+                $scope.updateUsers();
+            });
+        };
     }
 
 
@@ -208,6 +226,60 @@
             $scope.user.anrs = cleanedAnrs;
 
             $mdDialog.hide($scope.user);
+        };
+    }
+
+    function ManageUserIdentityDialogCtrl($scope, $mdDialog, ClientUsersService, toastr, gettextCatalog, targetUser) {
+        $scope.targetUser = targetUser;
+        $scope.providers = [];
+        $scope.currentIdentity = { isLinked: false };
+        $scope.formData = { providerCode: null, providerIdentifier: null };
+        $scope.isLoading = true;
+        $scope.isSaving = false;
+
+        // Charger les fournisseurs actifs
+        ClientUsersService.getIdentityProviders().then(function(providers) {
+            $scope.providers = providers;
+            if (providers.length > 0 && !$scope.formData.providerCode) {
+                $scope.formData.providerCode = providers[0].code;
+            }
+        });
+
+        // Charger l'identité actuelle
+        ClientUsersService.getUserIdentity(targetUser.id).then(function(identity) {
+            $scope.currentIdentity = identity;
+            $scope.isLoading = false;
+            if (identity.isLinked) {
+                $scope.formData.providerCode = identity.providerCode;
+                $scope.formData.providerIdentifier = identity.providerIdentifier;
+            }
+        });
+
+        $scope.cancel = function() {
+            $mdDialog.cancel();
+        };
+
+        $scope.saveIdentity = function() {
+            $scope.isSaving = true;
+            ClientUsersService.saveUserIdentity(targetUser.id, $scope.formData).then(function() {
+                toastr.success(gettextCatalog.getString("Le compte SSO a été associé avec succès."));
+                $mdDialog.hide();
+            }, function(error) {
+                $scope.isSaving = false;
+                var msg = error.data && error.data.error ? error.data.error : gettextCatalog.getString("Une erreur est survenue lors de l'enregistrement.");
+                toastr.error(msg);
+            });
+        };
+
+        $scope.unlinkIdentity = function() {
+            $scope.isSaving = true;
+            ClientUsersService.deleteUserIdentity(targetUser.id).then(function() {
+                toastr.success(gettextCatalog.getString("Le compte SSO a été délié avec succès."));
+                $mdDialog.hide();
+            }, function(error) {
+                $scope.isSaving = false;
+                toastr.error(gettextCatalog.getString("Erreur lors de la suppression de la liaison SSO."));
+            });
         };
     }
 

@@ -2,20 +2,22 @@
   angular
     .module('ClientApp')
     .controller('ClientLoginCtrl', [
-      '$scope', '$state', '$http', 'toastr', 'gettextCatalog', 'gettext', 'UserService',
+      '$scope', '$state', '$location', '$http', 'toastr', 'gettextCatalog', 'gettext', 'UserService',
       ClientLoginCtrl
     ]);
 
   /**
    * Login Controller for the Client module
    */
-  function ClientLoginCtrl($scope, $state, $http, toastr, gettextCatalog, gettext, UserService) {
+  function ClientLoginCtrl($scope, $state, $location, $http, toastr, gettextCatalog, gettext, UserService) {
     $scope.isLoggingIn = false;
     $scope.pwForgotMode = false;
     $scope.twoFAMode = false;
     $scope.twoFANotCorrect = false;
     $scope.twoFASetUpMode = false;
     $scope.recoveryCodeMode = false;
+    $scope.selectedAuthMode = null; // 'standard' ou 'pki'
+
     $scope.user = {
       'email': null,
       'password': null,
@@ -25,6 +27,14 @@
     };
     $scope.captcha = {};
     $scope.isCaptchaActivated = false;
+
+    $scope.selectAuthMode = function(mode) {
+      if (mode === 'sso') {
+        $scope.loginSSO();
+      } else {
+        $scope.selectedAuthMode = mode;
+      }
+    };
 
     $scope.passwordForgotten = function () {
       $scope.pwForgotMode = true;
@@ -53,6 +63,7 @@
       $scope.twoFANotCorrect = false;
       $scope.twoFASetUpMode = false;
       $scope.recoveryCodeMode = false;
+      $scope.selectedAuthMode = null;
       $scope.user.otp = "";
       $scope.user.recoveryCode = "";
     };
@@ -74,12 +85,16 @@
         }).catch(function (error) {
           console.error('CAPTCHA validation failed:', error);
           toastr.warning(gettext('Error of the CAPTCHA validation.'));
-          // Refresh CAPTCHA on failure
           $scope.refreshCaptcha();
         });
       } else {
         $scope.performAuth();
       }
+    }
+
+    $scope.loginSSO = function() {
+      $scope.isLoggingIn = true;
+      window.location.href = '/auth/sso/redirect';
     }
 
     $scope.performAuth = function() {
@@ -125,6 +140,27 @@
       );
     }
 
+    $scope.checkSsoReturn = function () {
+      var token = $location.search().token || 
+                  (window.location.href.match(/[?&]token=([^&]+)/) || [])[1];
+      var uid = $location.search().uid || 
+                  (window.location.href.match(/[?&]uid=([^&]+)/) || [])[1];
+
+      if (token && uid) {
+        $scope.isLoggingIn = true;
+        UserService.authenticateWithToken(decodeURIComponent(token), decodeURIComponent(uid)).then(
+          function () {
+            $state.transitionTo('main.project');
+          },
+          function (err) {
+            $scope.isLoggingIn = false;
+          }
+        );
+        return true;
+      }
+      return false;
+    };
+
     /* Fetch initial CAPTCHA */
     $scope.loadCaptcha = function () {
       $http.get('api/captcha').then(function (response) {
@@ -147,7 +183,9 @@
       $scope.loadCaptcha();
     };
 
-    /* Load CAPTCHA on controller initialization */
-    $scope.loadCaptcha();
+    // 🚀 INITIALISATION DU CONTRÔLEUR
+    if (!$scope.checkSsoReturn()) {
+      $scope.loadCaptcha();
+    }
   }
 })();
