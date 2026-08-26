@@ -223,7 +223,16 @@
     var setUiLanguage = function (lang) {
       localStorageService.set('uiLanguage', lang);
       self.uiLanguage = lang;
-    }
+    };
+
+    var getDataLanguage = function () {
+      return self.dataLanguage || self.uiLanguage || 1;
+    };
+
+    var setDataLanguage = function (lang) {
+      localStorageService.set('dataLanguage', lang);
+      self.dataLanguage = lang;
+    };
 
     ////////////////////////////////////
 
@@ -236,6 +245,8 @@
       getUserId: getUserId,
       getUiLanguage: getUiLanguage,
       setUiLanguage: setUiLanguage,
+      getDataLanguage: getDataLanguage,
+      setDataLanguage: setDataLanguage,
       isAuthenticated: isAuthenticated,
       isAllowed: isAllowed,
     };

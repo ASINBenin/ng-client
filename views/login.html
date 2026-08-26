@@ -6,7 +6,14 @@
       <img src="img/logo-monarc.png" style="width: 30% ;margin: 10px 0 0 0" >
     </div>
 
-    <form layout="column" class="md-padding" ng-submit="login()">
+    <div layout="column" layout-align="center center" ng-if="isLoggingIn" style="padding: 40px 20px;">
+      <md-progress-circular md-mode="indeterminate" md-diameter="50" class="md-accent"></md-progress-circular>
+      <p style="color: #ffffff; margin-top: 20px; font-size: 14px; font-weight: 500;" translate>
+        Connexion sécurisée en cours...
+      </p>
+    </div>
+
+    <form layout="column" class="md-padding" ng-submit="login()" ng-if="!isLoggingIn">
       <md-input-container flex ng-hide="twoFAMode || recoveryCodeMode || twoFANotCorrect">
         <label translate>E-mail</label>
         <md-icon>email</md-icon>

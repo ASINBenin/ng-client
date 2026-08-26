@@ -141,6 +141,18 @@
     }
 
     $scope.checkSsoReturn = function () {
+      // 1. Interception des erreurs SSO éventuelles
+      var urlError = $location.search().error || 
+                     (window.location.href.match(/[?&]error=([^&]+)/) || [])[1];
+
+      if (urlError) {
+        $scope.isLoggingIn = false;
+        var decodedError = decodeURIComponent(urlError.replace(/\+/g, ' '));
+        toastr.error(decodedError, gettext('Erreur d\'authentification'));
+        return false;
+      }
+
+      // 2. Interception du succès SSO
       var token = $location.search().token || 
                   (window.location.href.match(/[?&]token=([^&]+)/) || [])[1];
       var uid = $location.search().uid || 
