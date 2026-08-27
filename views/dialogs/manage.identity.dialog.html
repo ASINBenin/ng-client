@@ -1,0 +1,76 @@
+<md-dialog md-theme="light" class="dialog-width" style="max-width: 520px;">
+    <form name="identityForm" ng-submit="saveIdentity()">
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2 translate>Associer un compte SSO</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="cancel()">
+                    <md-icon aria-label="{{ 'Close dialog' | translate }}">close</md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+            <div class="md-dialog-content" layout="column">
+                <!-- En-tête utilisateur -->
+                <div style="background-color: #f8f9fa; border-left: 4px solid #1976d2; padding: 12px 16px; border-radius: 4px; margin-bottom: 20px;">
+                    <div style="font-weight: 600; font-size: 15px; color: #212121;">{{ targetUser.firstname }} {{ targetUser.lastname }}</div>
+                    <div style="color: #616161; font-size: 13px;">{{ targetUser.email }}</div>
+                </div>
+
+                <!-- Statut de liaison SSO -->
+                <div ng-if="currentIdentity.isLinked" layout="row" layout-align="start center" style="margin-bottom: 15px; padding: 12px 16px; background-color: #e8f5e9; border-radius: 4px; color: #2e7d32;">
+                    <md-icon style="color: #2e7d32; margin: 0 12px 0 0;">verified_user</md-icon>
+                    <div flex>
+                        <div><strong>Compte SSO lié :</strong> {{ currentIdentity.providerName }}</div>
+                        <div style="font-size: 13px; margin-top: 2px;">Identifiant : {{ currentIdentity.providerIdentifier }}</div>
+                    </div>
+                </div>
+
+                <div ng-if="!currentIdentity.isLinked && !isLoading" layout="row" layout-align="start center" style="margin-bottom: 15px; padding: 12px 16px; background-color: #fff3e0; border-radius: 4px; color: #e65100;">
+                    <md-icon style="color: #e65100; margin: 0 12px 0 0;">info</md-icon>
+                    <div flex>
+                        <span>Aucun compte SSO n'est actuellement associé à cet utilisateur.</span>
+                    </div>
+                </div>
+
+                <!-- Fournisseur SSO -->
+                <md-input-container class="md-block">
+                    <label translate>Fournisseur SSO</label>
+                    <md-icon>vpn_key</md-icon>
+                    <md-select ng-model="formData.providerCode" name="providerCode" required>
+                        <md-option ng-repeat="provider in providers" ng-value="provider.code">
+                            {{ provider.name }}
+                        </md-option>
+                    </md-select>
+                    <div ng-messages="identityForm.providerCode.$error" role="alert">
+                        <div ng-message="required">{{ 'Veuillez sélectionner un fournisseur SSO' | translate }}</div>
+                    </div>
+                </md-input-container>
+
+                <!-- Identifiant SSO -->
+                <md-input-container class="md-block">
+                    <label translate>Identifiant SSO</label>
+                    <md-icon>badge</md-icon>
+                    <input ng-model="formData.providerIdentifier" name="providerIdentifier" required placeholder="Ex: Identifiant unique / NPI">
+                    <div ng-messages="identityForm.providerIdentifier.$error" role="alert">
+                        <div ng-message="required">{{ 'Veuillez renseigner l\'identifiant SSO' | translate }}</div>
+                    </div>
+                </md-input-container>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row">
+            <md-button ng-if="currentIdentity.isLinked" class="md-warn" ng-click="unlinkIdentity()" ng-disabled="isSaving">
+                {{ 'Délier le compte SSO' | translate }}
+            </md-button>
+            <span flex></span>
+            <md-button ng-click="cancel()" ng-disabled="isSaving">
+                {{ 'Cancel' | translate }}
+            </md-button>
+            <md-button type="submit" class="md-primary md-raised" ng-disabled="identityForm.$invalid || isSaving">
+                {{ 'Enregistrer' | translate }}
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

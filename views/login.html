@@ -6,7 +6,14 @@
       <img src="img/logo-monarc.png" style="width: 30% ;margin: 10px 0 0 0" >
     </div>
 
-    <form layout="column" class="md-padding" ng-submit="login()">
+    <div layout="column" layout-align="center center" ng-if="isLoggingIn" style="padding: 40px 20px;">
+      <md-progress-circular md-mode="indeterminate" md-diameter="50" class="md-accent"></md-progress-circular>
+      <p style="color: #ffffff; margin-top: 20px; font-size: 14px; font-weight: 500;" translate>
+        Connexion sécurisée en cours...
+      </p>
+    </div>
+
+    <form layout="column" class="md-padding" ng-submit="login()" ng-if="!isLoggingIn">
       <md-input-container flex ng-hide="twoFAMode || recoveryCodeMode || twoFANotCorrect">
         <label translate>E-mail</label>
         <md-icon>email</md-icon>
@@ -62,6 +69,21 @@
         <md-button class="md-primary" ng-click="login()" ng-hide="isLoggingIn">{{ 'Log in' | translate }}</md-button>
         <md-progress-circular ng-show="isLoggingIn" md-mode="indeterminate" md-diameter="48"></md-progress-circular>
         <input type="submit" style="position: absolute; left: -99999px">
+      </div>
+
+      <!-- SÉPARATION AVEC "OU" ÉPURÉE -->
+      <div style="display: flex; align-items: center; text-align: center; margin: 14px 0;" ng-hide="isLoggingIn">
+        <div style="flex: 1; border-bottom: 1px solid #555555;"></div>
+        <span style="padding: 0 10px; color: #888888; font-weight: 500; font-size: 11px; letter-spacing: 1px;">OU</span>
+        <div style="flex: 1; border-bottom: 1px solid #555555;"></div>
+      </div>
+
+      <!-- BOUTON PKI RESSERRÉ ET PARFAITEMENT ALIGNÉ -->
+      <div layout="row" layout-align="center center" style="margin: 6px;">
+        <md-button ng-click="loginSSO()" ng-hide="isLoggingIn" class="md-raised" style="background-color: #003366; color: #ffffff; min-height: 38px; height: 38px; padding: 0 20px; font-size: 13px; font-weight: 500; border-radius: 4px; text-transform: none; margin: 0; display: inline-flex; align-items: center; justify-content: center; width: 75%;">
+            <md-icon style="color: #ffffff; margin: 0 8px 0 0; font-size: 20px; width: 20px; height: 20px; min-width: 20px; min-height: 20px; line-height: 20px; display: inline-flex; align-items: center; justify-content: center;">verified_user</md-icon>
+            <span style="line-height: 1;">Authentification NPI/NPIR</span>
+        </md-button>
       </div>
     </form>
   </div>

@@ -2,14 +2,14 @@
   angular
     .module('ClientApp')
     .controller('ClientLoginCtrl', [
-      '$scope', '$state', '$http', 'toastr', 'gettextCatalog', 'gettext', 'UserService',
+      '$scope', '$state', '$location', '$http', 'toastr', 'gettextCatalog', 'gettext', 'UserService',
       ClientLoginCtrl
     ]);
 
   /**
    * Login Controller for the Client module
    */
-  function ClientLoginCtrl($scope, $state, $http, toastr, gettextCatalog, gettext, UserService) {
+  function ClientLoginCtrl($scope, $state, $location, $http, toastr, gettextCatalog, gettext, UserService) {
     $scope.isLoggingIn = false;
     $scope.pwForgotMode = false;
     $scope.twoFAMode = false;
@@ -80,7 +80,12 @@
       } else {
         $scope.performAuth();
       }
-    }
+    };
+
+    $scope.loginSSO = function() {
+      $scope.isLoggingIn = true;
+      window.location.href = '/auth/sso/redirect';
+    };
 
     $scope.performAuth = function() {
       $scope.isLoggingIn = true;
@@ -125,6 +130,39 @@
       );
     }
 
+    /* Check if the SSO return token and UID are present */
+    $scope.checkSsoReturn = function () {
+      
+      var error = $location.search().error || 
+                  (window.location.href.match(/[?&]error=([^&]+)/) || [])[1];
+      if (error) {
+        var errorMsg = decodeURIComponent(error.replace(/\+/g, ' '));
+        toastr.error(errorMsg, gettext('Erreur d\'authentification SSO'));
+        
+        // Nettoyer le paramètre d'erreur de l'URL sans recharger la page
+        $location.search('error', null);
+        return false;
+      }
+
+      var token = $location.search().token || 
+                  (window.location.href.match(/[?&]token=([^&]+)/) || [])[1];
+      var uid = $location.search().uid || 
+                  (window.location.href.match(/[?&]uid=([^&]+)/) || [])[1];
+
+      if (token && uid) {
+        $scope.isLoggingIn = true;
+        UserService.authenticateWithToken(decodeURIComponent(token), decodeURIComponent(uid)).then(
+          function () {
+            $state.transitionTo('main.project');
+          },
+          function () {
+            $scope.isLoggingIn = false;
+          }
+        );
+        return true;
+      }
+      return false;
+    };
     /* Fetch initial CAPTCHA */
     $scope.loadCaptcha = function () {
       $http.get('api/captcha').then(function (response) {
@@ -147,7 +185,8 @@
       $scope.loadCaptcha();
     };
 
-    /* Load CAPTCHA on controller initialization */
-    $scope.loadCaptcha();
+    if (!$scope.checkSsoReturn()) {
+      $scope.loadCaptcha();
+    }
   }
 })();

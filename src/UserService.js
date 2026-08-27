@@ -156,6 +156,19 @@
       return promise.promise;
     };
 
+    var authenticateWithToken = function (token, uid) {
+      var promise = $q.defer();
+      self.authenticated = true;
+      self.token = token;
+      self.uid = uid;
+      localStorageService.set('auth_token', token);
+      localStorageService.set('uid', uid);
+      localStorageService.set('permission_groups', JSON.stringify([]));
+      
+      updateRoles(promise);
+      return promise.promise;
+    };
+
     /**
     * Clears the active authentication and revokes the active authentication token
     * @returns Promise
@@ -231,6 +244,7 @@
     return {
       reauthenticate: reauthenticate,
       authenticate: authenticate,
+      authenticateWithToken: authenticateWithToken,
       logout: logout,
       getToken: getToken,
       getUserId: getUserId,

@@ -2,9 +2,9 @@
 
     angular
         .module('ClientApp')
-        .factory('ClientUsersService', ['$resource', ClientUsersService]);
+        .factory('ClientUsersService', ['$resource', '$http', ClientUsersService]);
 
-    function ClientUsersService($resource) {
+    function ClientUsersService($resource, $http) {
         var self = this;
 
         self.UserResource = $resource('api/users/:userId', {userId: '@id'},
@@ -55,6 +55,19 @@
             return self.UserResetResource.query({userId: id}, success, error).$promise;
         };
 
+        var getIdentityProviders = function() {
+            return $http.get('api/identity-providers').then(function(res) { return res.data; });
+        };
+        var getUserIdentity = function(userId) {
+            return $http.get('api/users/' + userId + '/identity').then(function(res) { return res.data; });
+        };
+        var saveUserIdentity = function(userId, data) {
+            return $http.post('api/users/' + userId + '/identity', data);
+        };
+        var deleteUserIdentity = function(userId) {
+            return $http.delete('api/users/' + userId + '/identity');
+        };
+
         return {
             getUsers: getUsers,
             getUser: getUser,
@@ -62,7 +75,11 @@
             deleteUser: deleteUser,
             updateUser: updateUser,
             patchUser: patchUser,
-            resetUserPassword: resetUserPassword
+            resetUserPassword: resetUserPassword,
+            getIdentityProviders: getIdentityProviders,
+            getUserIdentity: getUserIdentity,
+            saveUserIdentity: saveUserIdentity,
+            deleteUserIdentity: deleteUserIdentity
         };
     }
 
