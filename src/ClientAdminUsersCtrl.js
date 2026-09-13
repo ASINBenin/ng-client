@@ -260,51 +260,75 @@
     function ManageUserIdentityDialogCtrl($scope, $mdDialog, ClientUsersService, toastr, gettextCatalog, targetUser) {
         $scope.targetUser = targetUser;
         $scope.providers = [];
-        $scope.currentIdentity = { isLinked: false };
-        $scope.formData = { providerCode: null, providerIdentifier: null };
+        $scope.linkedIdentities = [];
+        $scope.availableProviders = [];
+        $scope.formData = { providerCode: null, providerIdentifier: '' };
         $scope.isLoading = true;
         $scope.isSaving = false;
 
+        function updateAvailableProviders() {
+            var linkedCodes = $scope.linkedIdentities.map(function(identity) {
+                return identity.providerCode;
+            });
+            $scope.availableProviders = $scope.providers.filter(function(provider) {
+                return linkedCodes.indexOf(provider.code) === -1;
+            });
+            $scope.formData.providerCode = $scope.availableProviders.length > 0 ? $scope.availableProviders[0].code : null;
+            $scope.formData.providerIdentifier = '';
+            if ($scope.identityForm) {
+                $scope.identityForm.$setPristine();
+                $scope.identityForm.$setUntouched();
+            }
+        }
+
+        function loadIdentities() {
+            return ClientUsersService.getUserIdentities(targetUser.id).then(function(identities) {
+                $scope.linkedIdentities = identities;
+                updateAvailableProviders();
+            });
+        }
+
         ClientUsersService.getIdentityProviders().then(function(providers) {
             $scope.providers = providers;
-            if (providers.length > 0 && !$scope.formData.providerCode) {
-                $scope.formData.providerCode = providers[0].code;
-            }
+            updateAvailableProviders();
         });
 
-        ClientUsersService.getUserIdentity(targetUser.id).then(function(identity) {
-            $scope.currentIdentity = identity;
+        loadIdentities().finally(function() {
             $scope.isLoading = false;
-            if (identity.isLinked) {
-                $scope.formData.providerCode = identity.providerCode;
-                $scope.formData.providerIdentifier = identity.providerIdentifier;
-            }
         });
 
         $scope.cancel = function() {
             $mdDialog.cancel();
         };
 
+        $scope.close = function() {
+            $mdDialog.hide();
+        };
+
         $scope.saveIdentity = function() {
             $scope.isSaving = true;
             ClientUsersService.saveUserIdentity(targetUser.id, $scope.formData).then(function() {
-                toastr.success(gettextCatalog.getString("Le compte SSO a été associé avec succès."));
-                $mdDialog.hide();
+                toastr.success(gettextCatalog.getString("The SSO account has been linked successfully."));
+                loadIdentities().finally(function() {
+                    $scope.isSaving = false;
+                });
             }, function(error) {
                 $scope.isSaving = false;
-                var msg = error.data && error.data.error ? error.data.error : gettextCatalog.getString("Une erreur est survenue lors de l'enregistrement.");
+                var msg = error.data && error.data.error ? error.data.error : gettextCatalog.getString("An error occurred while saving.");
                 toastr.error(msg);
             });
         };
 
-        $scope.unlinkIdentity = function() {
+        $scope.unlinkIdentity = function(identity) {
             $scope.isSaving = true;
-            ClientUsersService.deleteUserIdentity(targetUser.id).then(function() {
-                toastr.success(gettextCatalog.getString("Le compte SSO a été délié avec succès."));
-                $mdDialog.hide();
+            ClientUsersService.deleteUserIdentity(targetUser.id, identity.id).then(function() {
+                toastr.success(gettextCatalog.getString("The SSO account has been unlinked successfully."));
+                loadIdentities().finally(function() {
+                    $scope.isSaving = false;
+                });
             }, function(error) {
                 $scope.isSaving = false;
-                toastr.error(gettextCatalog.getString("Erreur lors de la suppression de la liaison SSO."));
+                toastr.error(gettextCatalog.getString("An error occurred while unlinking the SSO account."));
             });
         };
     }

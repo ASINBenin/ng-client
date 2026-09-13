@@ -3,13 +3,13 @@
     angular
         .module('ClientApp')
         .controller('DeliveriesModelsCtrl', [
-            '$scope', '$mdDialog', '$mdMedia', '$http', 'toastr', 'gettextCatalog', 'DeliveriesModelsService',
-            'ConfigService', '$timeout', 'DownloadService',
+            '$scope', '$rootScope', '$mdDialog', '$mdMedia', '$http', 'toastr', 'gettextCatalog', 'DeliveriesModelsService',
+            'ConfigService', '$timeout', 'DownloadService', '$state', '$stateParams', 'SignatureRequestService',
             DeliveriesModelsCtrl
         ]);
 
-    function DeliveriesModelsCtrl($scope, $mdDialog, $mdMedia, $http, toastr, gettextCatalog,
-                                     DeliveriesModelsService, ConfigService, $timeout, DownloadService) {
+    function DeliveriesModelsCtrl($scope, $rootScope, $mdDialog, $mdMedia, $http, toastr, gettextCatalog,
+                                     DeliveriesModelsService, ConfigService, $timeout, DownloadService, $state, $stateParams, SignatureRequestService) {
         $scope.deliveriesmodels = [];
 
         $scope.categories = DeliveriesModelsService.getCategories();
@@ -114,6 +114,13 @@
             return DeliveriesModelsService.getCategoryLabel(id);
         };
 
+        $scope.prepareSignature = function (deliverable) {
+            $mdDialog.hide();
+            
+            var modelId = $rootScope.getUrlAnrId();
+
+            SignatureRequestService.initiateSignatureForDeliverable(deliverable, modelId);
+        };
     }
 
 
@@ -149,7 +156,6 @@
         $scope.uploadProgress = null;
         $scope.file = {};
 
-        // Upload system
         $scope.cancel = function () {
             $mdDialog.cancel();
         };

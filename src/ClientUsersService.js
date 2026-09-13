@@ -58,14 +58,14 @@
         var getIdentityProviders = function() {
             return $http.get('api/identity-providers').then(function(res) { return res.data; });
         };
-        var getUserIdentity = function(userId) {
+        var getUserIdentities = function(userId) {
             return $http.get('api/users/' + userId + '/identity').then(function(res) { return res.data; });
         };
         var saveUserIdentity = function(userId, data) {
             return $http.post('api/users/' + userId + '/identity', data);
         };
-        var deleteUserIdentity = function(userId) {
-            return $http.delete('api/users/' + userId + '/identity');
+        var deleteUserIdentity = function(userId, identityId) {
+            return $http.delete('api/users/' + userId + '/identity/' + identityId);
         };
 
         return {
@@ -77,7 +77,7 @@
             patchUser: patchUser,
             resetUserPassword: resetUserPassword,
             getIdentityProviders: getIdentityProviders,
-            getUserIdentity: getUserIdentity,
+            getUserIdentities: getUserIdentities,
             saveUserIdentity: saveUserIdentity,
             deleteUserIdentity: deleteUserIdentity
         };

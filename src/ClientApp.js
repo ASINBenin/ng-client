@@ -1,7 +1,7 @@
 angular
 .module('ClientApp', ['ngMaterial', 'ngAnimate', 'toastr', 'ui.router', 'gettext', 'ngResource',
 'LocalStorageModule', 'md.data.table', 'ncy-angular-breadcrumb', 'ngFileUpload',
-'ui.tree', 'ngMessages', 'angularTrix', 'AnrModule', 'ng-sortable'])
+'ui.tree', 'ngMessages', 'angularTrix', 'AnrModule', 'SignModule', 'ng-sortable'])
 .config(['$mdThemingProvider', '$stateProvider', '$urlRouterProvider', '$resourceProvider',
 'localStorageServiceProvider', '$httpProvider', '$breadcrumbProvider', '$provide', 'gettext', '$mdAriaProvider',
 '$mdDateLocaleProvider', '$locationProvider','$sceDelegateProvider',
@@ -134,6 +134,19 @@ function ($mdThemingProvider, $stateProvider, $urlRouterProvider, $resourceProvi
       views: {
         "main": {templateUrl: "views/passwordforgotten.html"}
       }
+    }).state('ssoLanding', {
+      url: "/sso-landing",
+      views: {
+        "main": {
+          templateUrl: "views/sso.landing.html",
+          controller: "SsoLandingCtrl",
+        },
+      },
+      params: {
+        token: null,
+        uid: null,
+        error: null,
+      },
     }).state('main', {
       url: "/client",
       views: {
@@ -343,6 +356,14 @@ function ($mdThemingProvider, $stateProvider, $urlRouterProvider, $resourceProvi
       ncyBreadcrumb: {
         label: gettext('Risks')
       },
+    }).state('main.project.anr.signatures', {
+      url: '/signatures',
+      views: {
+        'anr@main.project.anr': {templateUrl: 'views/anr/anr.home.html'}
+      },
+      ncyBreadcrumb: {
+        label: gettext('Electronic signatures')
+      }
     });
 
     $provide.factory('monarcHttpInter', ['$injector', function ($injector) {
@@ -358,7 +379,10 @@ function ($mdThemingProvider, $stateProvider, $urlRouterProvider, $resourceProvi
 
 
           if (UserService.isAuthenticated()) {
-            config.headers.token = UserService.getToken();
+            var reqUrl = config.url || '';
+            if (reqUrl.indexOf('127.0.0.1') === -1 && reqUrl.indexOf('localhost:42304') === -1) {
+              config.headers.token = UserService.getToken();
+            }
           }
 
           return config;

@@ -2,14 +2,14 @@
   angular
     .module('ClientApp')
     .controller('ClientLoginCtrl', [
-      '$scope', '$state', '$location', '$http', 'toastr', 'gettextCatalog', 'gettext', 'UserService',
+      '$scope', '$state', '$http', 'toastr', 'gettextCatalog', 'gettext', 'UserService',
       ClientLoginCtrl
     ]);
 
   /**
    * Login Controller for the Client module
    */
-  function ClientLoginCtrl($scope, $state, $location, $http, toastr, gettextCatalog, gettext, UserService) {
+  function ClientLoginCtrl($scope, $state, $http, toastr, gettextCatalog, gettext, UserService) {
     $scope.isLoggingIn = false;
     $scope.pwForgotMode = false;
     $scope.twoFAMode = false;
@@ -25,6 +25,7 @@
     };
     $scope.captcha = {};
     $scope.isCaptchaActivated = false;
+    $scope.ssoProviders = [];
 
     $scope.passwordForgotten = function () {
       $scope.pwForgotMode = true;
@@ -82,9 +83,9 @@
       }
     };
 
-    $scope.loginSSO = function() {
+    $scope.loginSSO = function(providerCode) {
       $scope.isLoggingIn = true;
-      window.location.href = '/auth/sso/redirect';
+      window.location.href = '/auth/sso/redirect?provider=' + encodeURIComponent(providerCode);
     };
 
     $scope.performAuth = function() {
@@ -130,39 +131,6 @@
       );
     }
 
-    /* Check if the SSO return token and UID are present */
-    $scope.checkSsoReturn = function () {
-      
-      var error = $location.search().error || 
-                  (window.location.href.match(/[?&]error=([^&]+)/) || [])[1];
-      if (error) {
-        var errorMsg = decodeURIComponent(error.replace(/\+/g, ' '));
-        toastr.error(errorMsg, gettext('Erreur d\'authentification SSO'));
-        
-        // Nettoyer le paramètre d'erreur de l'URL sans recharger la page
-        $location.search('error', null);
-        return false;
-      }
-
-      var token = $location.search().token || 
-                  (window.location.href.match(/[?&]token=([^&]+)/) || [])[1];
-      var uid = $location.search().uid || 
-                  (window.location.href.match(/[?&]uid=([^&]+)/) || [])[1];
-
-      if (token && uid) {
-        $scope.isLoggingIn = true;
-        UserService.authenticateWithToken(decodeURIComponent(token), decodeURIComponent(uid)).then(
-          function () {
-            $state.transitionTo('main.project');
-          },
-          function () {
-            $scope.isLoggingIn = false;
-          }
-        );
-        return true;
-      }
-      return false;
-    };
     /* Fetch initial CAPTCHA */
     $scope.loadCaptcha = function () {
       $http.get('api/captcha').then(function (response) {
@@ -185,8 +153,16 @@
       $scope.loadCaptcha();
     };
 
-    if (!$scope.checkSsoReturn()) {
-      $scope.loadCaptcha();
-    }
+    /* Fetch active SSO providers to display */
+    $scope.loadSsoProviders = function () {
+      $http.get('api/identity-providers').then(function (response) {
+        $scope.ssoProviders = response.data || [];
+      }).catch(function (error) {
+        console.error('Error loading SSO providers:', error);
+      });
+    };
+
+    $scope.loadCaptcha();
+    $scope.loadSsoProviders();
   }
 })();

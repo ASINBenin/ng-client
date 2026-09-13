@@ -9,7 +9,8 @@ module.exports = function (grunt) {
             pot: {
                 files: {
                     'po/template.pot': ['views/**/*.html', 'views/*.html', 'views/dialogs/*.html', 'src/**/*.js', 'src/*.js',
-                        '../ng_anr/views/*.html', '../ng_anr/src/**/*.js', '../ng_anr/src/*.js']
+                        '../ng_anr/views/*.html', '../ng_anr/src/**/*.js', '../ng_anr/src/*.js',
+                        '../ng_sign/views/**/*.html', '../ng_sign/views/*.html', '../ng_sign/views/dialogs/*.html', '../ng_sign/src/**/*.js', '../ng_sign/src/*.js']
                 }
             }
         },

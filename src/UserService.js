@@ -156,16 +156,32 @@
       return promise.promise;
     };
 
+    // Authentifie l'utilisateur à partir d'un token SSO déjà émis par le backend
     var authenticateWithToken = function (token, uid) {
       var promise = $q.defer();
-      self.authenticated = true;
       self.token = token;
       self.uid = uid;
       localStorageService.set('auth_token', token);
       localStorageService.set('uid', uid);
       localStorageService.set('permission_groups', JSON.stringify([]));
-      
-      updateRoles(promise);
+
+      var rolesPromise = $q.defer();
+      updateRoles(rolesPromise);
+
+      rolesPromise.promise.then(
+        function (result) {
+          self.authenticated = true;
+          promise.resolve(result);
+        },
+        function (revoked) {
+          self.token = null;
+          self.uid = null;
+          localStorageService.set('auth_token', null);
+          localStorageService.set('uid', null);
+          promise.reject(revoked);
+        }
+      );
+
       return promise.promise;
     };
 
