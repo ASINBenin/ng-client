@@ -85,7 +85,7 @@
 
     $scope.loginSSO = function(providerCode) {
       $scope.isLoggingIn = true;
-      window.location.href = '/auth/sso/redirect?provider=' + encodeURIComponent(providerCode);
+      window.location.href = 'auth/sso/redirect?provider=' + encodeURIComponent(providerCode);
     };
 
     $scope.performAuth = function() {
