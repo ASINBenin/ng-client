@@ -3331,6 +3331,9 @@ msgstr "Chargement du document et des signataires..."
 msgid "Local"
 msgstr "Locale"
 
+msgid "Local signature"
+msgstr "Signature en local"
+
 #: ../ng_sign/src/features/signature-process/SignatureProcessCtrl.js:520
 msgid "Local signature error"
 msgstr "Erreur de signature locale"
@@ -5290,7 +5293,7 @@ msgstr "Préparation de la signature"
 
 #: ../ng_sign/views/dialogs/signature.method.dialog.html:21
 msgid "Signature via local ID or USB token"
-msgstr "Signature via localID ou token USB"
+msgstr "Signature via local ID ou jeton USB"
 
 #: ../ng_sign/views/dialogs/signature.method.dialog.html:33
 msgid "Signature via virtual ID"

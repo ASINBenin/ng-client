@@ -114,9 +114,10 @@
                 </md-menu-content>
             </md-menu>
 
-            <md-button class="md-icon-button" ui-sref="main.account">
-                <md-tooltip md-theme="light">{{ "Account" | translate }}</md-tooltip>
+            <md-button flex="none" ui-sref="main.account" aria-label="{{ 'Account' | translate }}">
+                <md-tooltip md-theme="light">{{ "Account" | translate }}<span ng-if="connectedUser"> : {{ connectedUser.firstname }} {{ connectedUser.lastname }} ({{ connectedUser.email }})</span></md-tooltip>
                 <md-icon>person</md-icon>
+                <span hide-xs hide-sm ng-if="connectedUser">{{ connectedUser.firstname }} {{ connectedUser.lastname }}</span>
             </md-button>
 
             <md-menu>

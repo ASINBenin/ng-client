@@ -3703,6 +3703,9 @@ msgstr ""
 msgid "Local"
 msgstr ""
 
+msgid "Local signature"
+msgstr ""
+
 #: ../ng_sign/src/features/signature-process/SignatureProcessCtrl.js:520
 msgid "Local signature error"
 msgstr ""

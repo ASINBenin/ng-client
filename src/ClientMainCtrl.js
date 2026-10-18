@@ -4,7 +4,7 @@
   .module('ClientApp')
   .controller('ClientMainCtrl', [
     '$scope', '$rootScope', '$state', '$mdSidenav', '$mdMedia', '$mdDialog', '$timeout', 'gettextCatalog', 'UserService', 'AnalysisReviewService',
-    'ClientAnrService', 'StatsService', 'SystemMessageService', 'ChartService', 'toastr', '$http', '$interval', ClientMainCtrl
+    'ClientAnrService', 'StatsService', 'SystemMessageService', 'ChartService', 'toastr', '$http', '$interval', 'UserProfileService', ClientMainCtrl
   ])
   .directive('focusMe', function($timeout) {
     return {
@@ -42,7 +42,7 @@
   * Main Controller for the Client module
   */
   function ClientMainCtrl($scope, $rootScope, $state, $mdSidenav, $mdMedia, $mdDialog, $timeout, gettextCatalog, UserService, AnalysisReviewService,
-    ClientAnrService, StatsService, SystemMessageService, ChartService, toastr, $http, $interval ) {
+    ClientAnrService, StatsService, SystemMessageService, ChartService, toastr, $http, $interval, UserProfileService) {
       if (!UserService.isAuthenticated() && !UserService.reauthenticate()) {
         setTimeout(function () {
           $state.transitionTo('login');
@@ -50,6 +50,11 @@
 
         return;
       }
+
+      $scope.connectedUser = null;
+      UserProfileService.getProfile().then(function (profile) {
+        $scope.connectedUser = profile;
+      });
 
       $rootScope.appVersionCheckingTimestamp = new Date().getTime();
 

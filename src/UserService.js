@@ -191,7 +191,10 @@
     */
     var logout = function () {
       var promise = $q.defer();
-      $http.delete('auth').then(function (data) {
+      // Ferme d'abord la session TrustedX (jetons de signature) ; un échec ne bloque pas la déconnexion
+      $http.delete('api/sso/session').catch(angular.noop).then(function () {
+        return $http.delete('auth');
+      }).then(function (data) {
         localStorageService.set('permission_groups', JSON.stringify([]));
         localStorageService.set('auth_token', null);
         localStorageService.set('uid', null);
