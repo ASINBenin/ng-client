@@ -202,6 +202,14 @@ function ($mdThemingProvider, $stateProvider, $urlRouterProvider, $resourceProvi
       ncyBreadcrumb: {
         label: gettext('Users')
       }
+    }).state('main.campaigns', {
+      url: "/campaigns",
+      views: {
+        "main@main": {templateUrl: "views/client.campaigns.html"}
+      },
+      ncyBreadcrumb: {
+        label: gettext('Campaigns')
+      }
     }).state('main.project', {
       url: "/project",
       views: {

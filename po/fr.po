@@ -7496,3 +7496,42 @@ msgstr "{{count}} vulnérabilités ont été supprimées."
 
 #~ msgid "Unselect all"
 #~ msgstr "Tout désélectionner"
+
+msgid "Campaigns"
+msgstr "Campagnes"
+
+msgid "Campaign"
+msgstr "Campagne"
+
+msgid "Start date"
+msgstr "Date de début"
+
+msgid "Response deadline"
+msgstr "Date limite de réponse"
+
+msgid "End date"
+msgstr "Date de fin"
+
+msgid "Signature required"
+msgstr "Signature requise"
+
+msgid "Upcoming"
+msgstr "À venir"
+
+msgid "Open"
+msgstr "Ouverte"
+
+msgid "No answer"
+msgstr "Sans réponse"
+
+msgid "Closed"
+msgstr "Clôturée"
+
+msgid "The BackOffice could not be reached: the list below is the last one received."
+msgstr "Le BackOffice est injoignable : la liste ci-dessous est la dernière reçue."
+
+msgid "This entity is not connected to the BackOffice yet."
+msgstr "Cette entité n'est pas encore connectée au BackOffice."
+
+msgid "You are not invited to any campaign yet."
+msgstr "Vous n'êtes invité à aucune campagne pour le moment."

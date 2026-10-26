@@ -46,6 +46,13 @@
                     <p>{{ 'Creating risk analysis...' | translate }}</p>
                 </div>
             </md-list-item>
+            <md-list-item
+              ui-sref="main.campaigns"
+              ui-sref-active="active"
+              ng-show="isAllowed('superadminfo')">
+                <md-icon>assignment</md-icon>
+                <p>{{ 'Campaigns' | translate }}</p>
+            </md-list-item>
         </md-list>
 
         <md-divider></md-divider>

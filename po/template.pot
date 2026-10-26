@@ -7852,3 +7852,42 @@ msgstr ""
 #: ../ng_anr/src/AnrKbMgmtCtrl.js:991
 msgid "{{count}} vulnerabilities have been deleted."
 msgstr ""
+
+msgid "Campaigns"
+msgstr ""
+
+msgid "Campaign"
+msgstr ""
+
+msgid "Start date"
+msgstr ""
+
+msgid "Response deadline"
+msgstr ""
+
+msgid "End date"
+msgstr ""
+
+msgid "Signature required"
+msgstr ""
+
+msgid "Upcoming"
+msgstr ""
+
+msgid "Open"
+msgstr ""
+
+msgid "No answer"
+msgstr ""
+
+msgid "Closed"
+msgstr ""
+
+msgid "The BackOffice could not be reached: the list below is the last one received."
+msgstr ""
+
+msgid "This entity is not connected to the BackOffice yet."
+msgstr ""
+
+msgid "You are not invited to any campaign yet."
+msgstr ""
