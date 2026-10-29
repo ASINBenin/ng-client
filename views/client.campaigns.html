@@ -63,6 +63,9 @@
                         <md-button ng-if="campaign.anrId" ui-sref="main.project.anr({modelId: campaign.anrId})">
                             <span translate>Open the analysis</span>
                         </md-button>
+                        <md-button ng-if="campaign.anrId" ng-click="manageAccess(campaign, $event)">
+                            <span translate>Manage access</span>
+                        </md-button>
                     </td>
                 </tr>
                 </tbody>

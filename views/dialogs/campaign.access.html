@@ -1,0 +1,38 @@
+<md-dialog md-theme="light" class="dialog-width">
+    <form name="accessForm" ng-submit="save()">
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>{{ 'Access to the analysis' | translate }} : {{ campaign.label }}</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="cancel()">
+                    <md-icon aria-label="{{ 'Close dialog' | translate }}">close</md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+        <md-dialog-content>
+            <div class="md-dialog-content" layout="column">
+                <p translate>You keep full access. Choose who else can open this analysis.</p>
+                <md-progress-linear ng-if="isLoading" md-mode="indeterminate"></md-progress-linear>
+                <p ng-if="!isLoading && users.length === 0" translate>There is no other user in this entity.</p>
+
+                <div layout="row" layout-align="start center" ng-repeat="user in users">
+                    <div flex>
+                        <strong>{{ user.firstname }} {{ user.lastname }}</strong>
+                        <div class="md-caption">{{ user.email }}</div>
+                    </div>
+                    <md-input-container>
+                        <md-select ng-model="user.access" aria-label="{{ 'Access' | translate }}">
+                            <md-option value="none" translate>No access</md-option>
+                            <md-option value="read" translate>Read only</md-option>
+                            <md-option value="write" translate>Read and write</md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+            </div>
+        </md-dialog-content>
+        <md-dialog-actions>
+            <md-button ng-click="cancel()" translate>Cancel</md-button>
+            <md-button type="submit" class="md-primary md-raised" ng-disabled="isLoading || isSaving" translate>Save</md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

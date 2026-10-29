@@ -16,6 +16,15 @@
             }
         });
 
+        var accessResource = $resource('api/campaigns/:id/access', {id: '@id'}, {
+            'get': {
+                method: 'GET'
+            },
+            'replace': {
+                method: 'PUT'
+            }
+        });
+
         /**
          * Campagnes de l'entité, après synchronisation avec le BackOffice : { campaigns: [], synchronization: '' }.
          */
@@ -30,9 +39,25 @@
             return participationResource.participate({id: id}, {}).$promise;
         };
 
+        /**
+         * Utilisateurs pouvant accéder à l'analyse de la campagne, avec leur droit : { users: [{id, ..., rwd}] }.
+         */
+        var getAccess = function (id) {
+            return accessResource.get({id: id}).$promise;
+        };
+
+        /**
+         * Remplace les accès ; accesses : [{userId, rwd}], rwd valant 0 (lecture) ou 1 (écriture).
+         */
+        var setAccess = function (id, accesses) {
+            return accessResource.replace({id: id}, {accesses: accesses}).$promise;
+        };
+
         return {
             getCampaigns: getCampaigns,
-            participate: participate
+            participate: participate,
+            getAccess: getAccess,
+            setAccess: setAccess
         };
     }
 

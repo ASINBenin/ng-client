@@ -72,9 +72,59 @@
                     gettextCatalog.getString('Participation recorded')
                 );
                 $rootScope.$broadcast('fo-anr-changed');
+                $scope.manageAccess(campaign);
             }).finally(function () {
                 campaign.isSaving = false;
             });
+        }
+
+        /**
+         * The administrator chooses who else can open the analysis of the campaign.
+         */
+        $scope.manageAccess = function (campaign, ev) {
+            $mdDialog.show({
+                controller: ['$scope', '$mdDialog', 'campaign', CampaignAccessDialogCtrl],
+                templateUrl: 'views/dialogs/campaign.access.html',
+                targetEvent: ev,
+                locals: {campaign: campaign},
+                clickOutsideToClose: false
+            });
+        };
+
+        function CampaignAccessDialogCtrl($scope, $mdDialog, campaign) {
+            $scope.campaign = campaign;
+            $scope.users = [];
+            $scope.isLoading = true;
+            $scope.isSaving = false;
+
+            ClientCampaignsService.getAccess(campaign.id).then(function (data) {
+                $scope.users = data.users.map(function (user) {
+                    user.access = user.rwd === null ? 'none' : (user.rwd === 1 ? 'write' : 'read');
+                    return user;
+                });
+            }).finally(function () {
+                $scope.isLoading = false;
+            });
+
+            $scope.cancel = function () {
+                $mdDialog.cancel();
+            };
+
+            $scope.save = function () {
+                var accesses = $scope.users.filter(function (user) {
+                    return user.access !== 'none';
+                }).map(function (user) {
+                    return {userId: user.id, rwd: user.access === 'write' ? 1 : 0};
+                });
+
+                $scope.isSaving = true;
+                ClientCampaignsService.setAccess(campaign.id, accesses).then(function () {
+                    toastr.success(gettextCatalog.getString('The access to the analysis has been updated.'));
+                    $mdDialog.hide();
+                }).finally(function () {
+                    $scope.isSaving = false;
+                });
+            };
         }
 
         ClientCampaignsService.getCampaigns().then(function (data) {

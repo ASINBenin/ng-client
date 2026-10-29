@@ -7562,3 +7562,24 @@ msgstr "Votre analyse a été créée."
 
 msgid "Participation recorded"
 msgstr "Participation enregistrée"
+
+msgid "Manage access"
+msgstr "Gérer les accès"
+
+msgid "Access to the analysis"
+msgstr "Accès à l'analyse"
+
+msgid "You keep full access. Choose who else can open this analysis."
+msgstr "Vous gardez tous les droits. Choisissez qui d'autre peut ouvrir cette analyse."
+
+msgid "There is no other user in this entity."
+msgstr "Il n'y a aucun autre utilisateur dans cette entité."
+
+msgid "Access"
+msgstr "Accès"
+
+msgid "Read only"
+msgstr "Lecture seule"
+
+msgid "The access to the analysis has been updated."
+msgstr "L'accès à l'analyse a été mis à jour."

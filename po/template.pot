@@ -7918,3 +7918,24 @@ msgstr ""
 
 msgid "Participation recorded"
 msgstr ""
+
+msgid "Manage access"
+msgstr ""
+
+msgid "Access to the analysis"
+msgstr ""
+
+msgid "You keep full access. Choose who else can open this analysis."
+msgstr ""
+
+msgid "There is no other user in this entity."
+msgstr ""
+
+msgid "Access"
+msgstr ""
+
+msgid "Read only"
+msgstr ""
+
+msgid "The access to the analysis has been updated."
+msgstr ""
