@@ -7891,3 +7891,30 @@ msgstr ""
 
 msgid "You are not invited to any campaign yet."
 msgstr ""
+
+msgid "Participation"
+msgstr ""
+
+msgid "Participate"
+msgstr ""
+
+msgid "Participating"
+msgstr ""
+
+msgid "Create the analysis"
+msgstr ""
+
+msgid "Open the analysis"
+msgstr ""
+
+msgid "Do you want to participate in this campaign?"
+msgstr ""
+
+msgid "An analysis based on the campaign model will be created. You cannot withdraw afterwards."
+msgstr ""
+
+msgid "Your analysis has been created."
+msgstr ""
+
+msgid "Participation recorded"
+msgstr ""

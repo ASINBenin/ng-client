@@ -7535,3 +7535,30 @@ msgstr "Cette entité n'est pas encore connectée au BackOffice."
 
 msgid "You are not invited to any campaign yet."
 msgstr "Vous n'êtes invité à aucune campagne pour le moment."
+
+msgid "Participation"
+msgstr "Participation"
+
+msgid "Participate"
+msgstr "Participer"
+
+msgid "Participating"
+msgstr "Participe"
+
+msgid "Create the analysis"
+msgstr "Créer l'analyse"
+
+msgid "Open the analysis"
+msgstr "Ouvrir l'analyse"
+
+msgid "Do you want to participate in this campaign?"
+msgstr "Voulez-vous participer à cette campagne ?"
+
+msgid "An analysis based on the campaign model will be created. You cannot withdraw afterwards."
+msgstr "Une analyse basée sur le modèle de la campagne sera créée. Vous ne pourrez plus vous retirer."
+
+msgid "Your analysis has been created."
+msgstr "Votre analyse a été créée."
+
+msgid "Participation recorded"
+msgstr "Participation enregistrée"

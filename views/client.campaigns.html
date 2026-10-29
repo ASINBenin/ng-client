@@ -31,6 +31,7 @@
                     <th md-column><span translate>End date</span></th>
                     <th md-column><span translate>Signature required</span></th>
                     <th md-column><span translate>Status</span></th>
+                    <th md-column><span translate>Participation</span></th>
                 </tr>
                 </thead>
 
@@ -49,6 +50,19 @@
                         <span ng-switch-when="open" translate>Open</span>
                         <span ng-switch-when="noAnswer" translate>No answer</span>
                         <span ng-switch-when="closed" translate>Closed</span>
+                    </td>
+                    <td md-cell>
+                        <span ng-if="campaign.participationStatus === 'participating'" translate>Participating</span>
+                        <md-button class="md-raised md-primary"
+                                   ng-if="canParticipate(campaign)"
+                                   ng-disabled="campaign.isSaving"
+                                   ng-click="participate(campaign, $event)">
+                            <span ng-if="campaign.participationStatus === 'invited'" translate>Participate</span>
+                            <span ng-if="campaign.participationStatus !== 'invited'" translate>Create the analysis</span>
+                        </md-button>
+                        <md-button ng-if="campaign.anrId" ui-sref="main.project.anr({modelId: campaign.anrId})">
+                            <span translate>Open the analysis</span>
+                        </md-button>
                     </td>
                 </tr>
                 </tbody>
