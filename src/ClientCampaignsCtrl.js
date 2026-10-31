@@ -4,14 +4,16 @@
         .module('ClientApp')
         .controller('ClientCampaignsCtrl', [
             '$scope', '$rootScope', '$mdDialog', 'gettextCatalog', 'toastr', 'ClientCampaignsService',
-            ClientCampaignsCtrl
+            'ClientAnrService', ClientCampaignsCtrl
         ]);
 
     /**
      * Campaigns the entity is invited to, received from the BackOffice.
      */
-    function ClientCampaignsCtrl($scope, $rootScope, $mdDialog, gettextCatalog, toastr, ClientCampaignsService) {
+    function ClientCampaignsCtrl($scope, $rootScope, $mdDialog, gettextCatalog, toastr, ClientCampaignsService,
+                                 ClientAnrService) {
         $scope.campaigns = [];
+        $scope.freeAnrs = [];
         $scope.synchronization = 'ok';
         $scope.isLoading = true;
 
@@ -126,6 +128,61 @@
                 });
             };
         }
+
+        /**
+         * History of the reports sent to the BackOffice for an analysis, and sending of a new version.
+         * Reports can be sent while the campaign is open; an analysis outside any campaign needs write access.
+         */
+        $scope.showReports = function (anr, canSubmit, ev) {
+            $mdDialog.show({
+                controller: ['$scope', '$mdDialog', 'anr', 'canSubmit', ReportsDialogCtrl],
+                templateUrl: 'views/dialogs/campaign.reports.html',
+                targetEvent: ev,
+                locals: {anr: anr, canSubmit: canSubmit},
+                clickOutsideToClose: false
+            });
+        };
+
+        function ReportsDialogCtrl($scope, $mdDialog, anr, canSubmit) {
+            $scope.anr = anr;
+            $scope.canSubmit = canSubmit;
+            $scope.submissions = [];
+            $scope.isLoading = true;
+            $scope.isSending = false;
+
+            ClientCampaignsService.getSubmissions(anr.id).then(function (data) {
+                $scope.submissions = data.submissions;
+            }).finally(function () {
+                $scope.isLoading = false;
+            });
+
+            $scope.formatSize = function (bytes) {
+                return bytes >= 1048576 ? (bytes / 1048576).toFixed(1) + ' MB' : Math.ceil(bytes / 1024) + ' KB';
+            };
+
+            $scope.close = function () {
+                $mdDialog.hide();
+            };
+
+            $scope.send = function () {
+                $scope.isSending = true;
+                ClientCampaignsService.submitReport(anr.id).then(function (data) {
+                    $scope.submissions.unshift(data.submission);
+                    toastr.success(gettextCatalog.getString(
+                        'Version {{version}} of the report has been sent to the BackOffice.',
+                        {version: data.submission.version}
+                    ));
+                }).finally(function () {
+                    $scope.isSending = false;
+                });
+            };
+        }
+
+        ClientAnrService.getAnrs().then(function (data) {
+            $scope.freeAnrs = data.anrs.filter(function (anr) {
+                return anr.rwd >= 0 && !anr.campaignLocked;
+            });
+        });
 
         ClientCampaignsService.getCampaigns().then(function (data) {
             $scope.campaigns = data.campaigns;

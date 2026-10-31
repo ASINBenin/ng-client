@@ -1,0 +1,45 @@
+<md-dialog md-theme="light" class="dialog-width">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>{{ 'Reports sent to the BackOffice' | translate }} : {{ anr.label }}</h2>
+            <span flex></span>
+            <md-button class="md-icon-button" ng-click="close()">
+                <md-icon aria-label="{{ 'Close dialog' | translate }}">close</md-icon>
+            </md-button>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content" layout="column">
+            <p translate>Sending generates the report from the analysis as it is now. Each sending is a new version; the previous ones are kept.</p>
+            <md-progress-linear ng-if="isLoading || isSending" md-mode="indeterminate"></md-progress-linear>
+            <p ng-if="!isLoading && submissions.length === 0" translate>No report has been sent yet.</p>
+
+            <table md-table ng-if="submissions.length > 0">
+                <thead md-head>
+                <tr md-row>
+                    <th md-column><span translate>Version</span></th>
+                    <th md-column><span translate>Date</span></th>
+                    <th md-column><span translate>Author</span></th>
+                    <th md-column><span translate>Size</span></th>
+                    <th md-column><span translate>Signed</span></th>
+                </tr>
+                </thead>
+                <tbody md-body>
+                <tr md-row ng-repeat="submission in submissions">
+                    <td md-cell>{{ submission.version }}</td>
+                    <td md-cell>{{ submission.submittedAt | date:'dd/MM/yyyy HH:mm' }}</td>
+                    <td md-cell>{{ submission.submittedBy }}</td>
+                    <td md-cell>{{ formatSize(submission.fileSize) }}</td>
+                    <td md-cell><md-icon ng-if="submission.isSigned">check</md-icon></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions>
+        <md-button ng-click="close()" translate>Close</md-button>
+        <md-button class="md-primary md-raised" ng-if="canSubmit" ng-disabled="isLoading || isSending" ng-click="send()">
+            <span translate>Send a new version</span>
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

@@ -7939,3 +7939,33 @@ msgstr ""
 
 msgid "The access to the analysis has been updated."
 msgstr ""
+
+msgid "Reports"
+msgstr ""
+
+msgid "Reports sent to the BackOffice"
+msgstr ""
+
+msgid "Sending generates the report from the analysis as it is now. Each sending is a new version; the previous ones are kept."
+msgstr ""
+
+msgid "No report has been sent yet."
+msgstr ""
+
+msgid "Send a new version"
+msgstr ""
+
+msgid "Version {{version}} of the report has been sent to the BackOffice."
+msgstr ""
+
+msgid "Analyses outside any campaign"
+msgstr ""
+
+msgid "You can also send the report of any of your analyses to the BackOffice."
+msgstr ""
+
+msgid "Analysis"
+msgstr ""
+
+msgid "Size"
+msgstr ""

@@ -25,6 +25,15 @@
             }
         });
 
+        var submissionsResource = $resource('api/client-anr/:id/submissions', {id: '@id'}, {
+            'query': {
+                method: 'GET'
+            },
+            'submit': {
+                method: 'POST'
+            }
+        });
+
         /**
          * Campagnes de l'entité, après synchronisation avec le BackOffice : { campaigns: [], synchronization: '' }.
          */
@@ -53,11 +62,27 @@
             return accessResource.replace({id: id}, {accesses: accesses}).$promise;
         };
 
+        /**
+         * Versions du rapport de l'analyse déjà envoyées au BackOffice, la plus récente d'abord : { submissions: [] }.
+         */
+        var getSubmissions = function (anrId) {
+            return submissionsResource.query({id: anrId}).$promise;
+        };
+
+        /**
+         * Génère le rapport de l'analyse et l'envoie au BackOffice : renvoie la version créée { submission: {} }.
+         */
+        var submitReport = function (anrId) {
+            return submissionsResource.submit({id: anrId}, {}).$promise;
+        };
+
         return {
             getCampaigns: getCampaigns,
             participate: participate,
             getAccess: getAccess,
-            setAccess: setAccess
+            setAccess: setAccess,
+            getSubmissions: getSubmissions,
+            submitReport: submitReport
         };
     }
 

@@ -7583,3 +7583,33 @@ msgstr "Lecture seule"
 
 msgid "The access to the analysis has been updated."
 msgstr "L'accès à l'analyse a été mis à jour."
+
+msgid "Reports"
+msgstr "Rapports"
+
+msgid "Reports sent to the BackOffice"
+msgstr "Rapports envoyés au BackOffice"
+
+msgid "Sending generates the report from the analysis as it is now. Each sending is a new version; the previous ones are kept."
+msgstr "L'envoi génère le rapport à partir de l'analyse dans son état actuel. Chaque envoi crée une nouvelle version ; les précédentes sont conservées."
+
+msgid "No report has been sent yet."
+msgstr "Aucun rapport n'a encore été envoyé."
+
+msgid "Send a new version"
+msgstr "Envoyer une nouvelle version"
+
+msgid "Version {{version}} of the report has been sent to the BackOffice."
+msgstr "La version {{version}} du rapport a été envoyée au BackOffice."
+
+msgid "Analyses outside any campaign"
+msgstr "Analyses hors campagne"
+
+msgid "You can also send the report of any of your analyses to the BackOffice."
+msgstr "Vous pouvez aussi envoyer au BackOffice le rapport de n'importe laquelle de vos analyses."
+
+msgid "Analysis"
+msgstr "Analyse"
+
+msgid "Size"
+msgstr "Taille"

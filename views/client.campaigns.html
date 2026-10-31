@@ -66,6 +66,44 @@
                         <md-button ng-if="campaign.anrId" ng-click="manageAccess(campaign, $event)">
                             <span translate>Manage access</span>
                         </md-button>
+                        <md-button ng-if="campaign.anrId"
+                                   ng-click="showReports({id: campaign.anrId, label: campaign.label}, campaign.status !== 'closed', $event)">
+                            <span translate>Reports</span>
+                        </md-button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </md-table-container>
+    </md-card>
+
+    <md-card md-theme="light" ng-if="freeAnrs.length > 0">
+        <md-toolbar class="md-table-toolbar md-default">
+            <div class="md-toolbar-tools">
+                <h2 class="md-title" translate>Analyses outside any campaign</h2>
+            </div>
+        </md-toolbar>
+        <md-card-content>
+            <span translate>You can also send the report of any of your analyses to the BackOffice.</span>
+        </md-card-content>
+        <md-table-container flex>
+            <table md-table>
+                <thead md-head>
+                <tr md-row>
+                    <th md-column><span translate>Analysis</span></th>
+                    <th md-column></th>
+                </tr>
+                </thead>
+                <tbody md-body>
+                <tr md-row ng-repeat="anr in freeAnrs">
+                    <td md-cell><strong>{{ anr.label }}</strong></td>
+                    <td md-cell>
+                        <md-button ui-sref="main.project.anr({modelId: anr.id})">
+                            <span translate>Open the analysis</span>
+                        </md-button>
+                        <md-button ng-click="showReports(anr, anr.rwd === 1, $event)">
+                            <span translate>Reports</span>
+                        </md-button>
                     </td>
                 </tr>
                 </tbody>
