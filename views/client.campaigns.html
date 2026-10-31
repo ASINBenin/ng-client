@@ -1,5 +1,4 @@
-<div ng-controller="ClientCampaignsCtrl">
-    <md-card md-theme="light">
+<md-card md-theme="light" layout="column" style="min-height: calc(100vh - 112px)" ng-controller="ClientCampaignsCtrl">
         <md-toolbar class="md-table-toolbar md-default">
             <div class="md-toolbar-tools">
                 <h2 class="md-title" translate>Campaigns</h2>
@@ -75,9 +74,8 @@
                 </tbody>
             </table>
         </md-table-container>
-    </md-card>
 
-    <md-card md-theme="light" ng-if="freeAnrs.length > 0">
+    <div ng-if="freeAnrs.length > 0">
         <md-toolbar class="md-table-toolbar md-default">
             <div class="md-toolbar-tools">
                 <h2 class="md-title" translate>Analyses outside any campaign</h2>
@@ -109,5 +107,5 @@
                 </tbody>
             </table>
         </md-table-container>
-    </md-card>
-</div>
+    </div>
+</md-card>
