@@ -7613,3 +7613,21 @@ msgstr "Analyse"
 
 msgid "Size"
 msgstr "Taille"
+
+msgid "The BackOffice could not be reached: the appreciations shown may be out of date."
+msgstr "Le BackOffice est injoignable : les appréciations affichées peuvent ne pas être à jour."
+
+msgid "Appreciation"
+msgstr "Appréciation"
+
+msgid "Insufficient"
+msgstr "Insuffisant"
+
+msgid "To improve"
+msgstr "À améliorer"
+
+msgid "Satisfactory"
+msgstr "Satisfaisant"
+
+msgid "Very satisfactory"
+msgstr "Très satisfaisant"

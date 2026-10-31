@@ -7969,3 +7969,21 @@ msgstr ""
 
 msgid "Size"
 msgstr ""
+
+msgid "The BackOffice could not be reached: the appreciations shown may be out of date."
+msgstr ""
+
+msgid "Appreciation"
+msgstr ""
+
+msgid "Insufficient"
+msgstr ""
+
+msgid "To improve"
+msgstr ""
+
+msgid "Satisfactory"
+msgstr ""
+
+msgid "Very satisfactory"
+msgstr ""

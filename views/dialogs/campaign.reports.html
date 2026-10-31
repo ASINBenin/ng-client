@@ -13,6 +13,10 @@
             <p translate>Sending generates the report from the analysis as it is now. Each sending is a new version; the previous ones are kept.</p>
             <md-progress-linear ng-if="isLoading || isSending" md-mode="indeterminate"></md-progress-linear>
             <p ng-if="!isLoading && submissions.length === 0" translate>No report has been sent yet.</p>
+            <p ng-if="synchronization !== 'ok'">
+                <md-icon class="analysis-review-warning">warning</md-icon>
+                <span translate>The BackOffice could not be reached: the appreciations shown may be out of date.</span>
+            </p>
 
             <table md-table ng-if="submissions.length > 0">
                 <thead md-head>
@@ -22,6 +26,7 @@
                     <th md-column><span translate>Author</span></th>
                     <th md-column><span translate>Size</span></th>
                     <th md-column><span translate>Signed</span></th>
+                    <th md-column><span translate>Appreciation</span></th>
                 </tr>
                 </thead>
                 <tbody md-body>
@@ -31,6 +36,16 @@
                     <td md-cell>{{ submission.submittedBy }}</td>
                     <td md-cell>{{ formatSize(submission.fileSize) }}</td>
                     <td md-cell><md-icon ng-if="submission.isSigned">check</md-icon></td>
+                    <td md-cell>
+                        <span ng-if="!submission.appreciation">-</span>
+                        <div ng-if="submission.appreciation" ng-switch="submission.appreciation.level">
+                            <strong ng-switch-when="insufficient" translate>Insufficient</strong>
+                            <strong ng-switch-when="to_improve" translate>To improve</strong>
+                            <strong ng-switch-when="satisfactory" translate>Satisfactory</strong>
+                            <strong ng-switch-when="very_satisfactory" translate>Very satisfactory</strong>
+                            <div class="md-caption" ng-if="submission.appreciation.comment">{{ submission.appreciation.comment }}</div>
+                        </div>
+                    </td>
                 </tr>
                 </tbody>
             </table>

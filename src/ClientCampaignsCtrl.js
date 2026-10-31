@@ -147,11 +147,13 @@
             $scope.anr = anr;
             $scope.canSubmit = canSubmit;
             $scope.submissions = [];
+            $scope.synchronization = 'ok';
             $scope.isLoading = true;
             $scope.isSending = false;
 
             ClientCampaignsService.getSubmissions(anr.id).then(function (data) {
                 $scope.submissions = data.submissions;
+                $scope.synchronization = data.synchronization;
             }).finally(function () {
                 $scope.isLoading = false;
             });
