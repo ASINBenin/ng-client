@@ -7987,3 +7987,9 @@ msgstr ""
 
 msgid "Very satisfactory"
 msgstr ""
+
+msgid "This analysis belongs to a campaign: only the evaluations (risks, consequences, recommendations) can be modified."
+msgstr ""
+
+msgid "The campaign is closed: this analysis can no longer be modified."
+msgstr ""

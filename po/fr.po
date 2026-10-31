@@ -7631,3 +7631,9 @@ msgstr "Satisfaisant"
 
 msgid "Very satisfactory"
 msgstr "Très satisfaisant"
+
+msgid "This analysis belongs to a campaign: only the evaluations (risks, consequences, recommendations) can be modified."
+msgstr "Cette analyse appartient à une campagne : seules les évaluations (risques, conséquences, recommandations) sont modifiables."
+
+msgid "The campaign is closed: this analysis can no longer be modified."
+msgstr "La campagne est clôturée : cette analyse n'est plus modifiable."
