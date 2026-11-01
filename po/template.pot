@@ -7993,3 +7993,6 @@ msgstr ""
 
 msgid "The campaign is closed: this analysis can no longer be modified."
 msgstr ""
+
+msgid "Invited"
+msgstr ""
