@@ -52,7 +52,7 @@
         </div>
     </md-dialog-content>
     <md-dialog-actions>
-        <md-button ng-click="close()" translate>Close</md-button>
+        <md-button ng-click="close()">{{ 'Close' | translate }}</md-button>
         <md-button class="md-primary md-raised" ng-if="canSubmit" ng-disabled="isLoading || isSending" ng-click="send()">
             <span translate>Send a new version</span>
         </md-button>
