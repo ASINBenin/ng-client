@@ -38,7 +38,10 @@
                 <tr md-row ng-repeat="campaign in campaigns">
                     <td md-cell>
                         <strong>{{ campaign.label }}</strong>
-                        <div class="md-caption" ng-if="campaign.description">{{ campaign.description }}</div>
+                        <div class="md-caption campaign-description" ng-if="campaign.description">
+                            {{ campaign.description }}
+                            <md-tooltip class="campaign-description-tooltip" md-direction="bottom">{{ campaign.description }}</md-tooltip>
+                        </div>
                     </td>
                     <td md-cell>{{ campaign.startDate }}</td>
                     <td md-cell>{{ campaign.responseDeadline }}</td>

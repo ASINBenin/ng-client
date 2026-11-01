@@ -175,3 +175,21 @@ md-sidenav.md-sidenav-left{
   line-height: 26px;
   padding: 0 10px;
 }
+
+/* Description d'une campagne : deux lignes au plus dans le tableau, le texte complet est dans l'infobulle */
+.campaign-description {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  max-width: 420px;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+.campaign-description-tooltip .md-content {
+  height: auto;
+  max-width: 420px;
+  padding: 8px 12px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
