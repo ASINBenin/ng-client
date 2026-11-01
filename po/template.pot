@@ -7996,3 +7996,36 @@ msgstr ""
 
 msgid "Invited"
 msgstr ""
+
+msgid "Send a report"
+msgstr ""
+
+msgid "Signed reports"
+msgstr ""
+
+msgid "Signed on"
+msgstr ""
+
+msgid "Read the report"
+msgstr ""
+
+msgid "Submit this report"
+msgstr ""
+
+msgid "This campaign requires a signed report. Sign the final report in the electronic signature tab: it will then appear here."
+msgstr ""
+
+msgid "The report is generated from the analysis as it is now. Read it, then submit it: the file you read is exactly the one sent."
+msgstr ""
+
+msgid "Prepare the report"
+msgstr ""
+
+msgid "Prepared report"
+msgstr ""
+
+msgid "valid until"
+msgstr ""
+
+msgid "Discard"
+msgstr ""

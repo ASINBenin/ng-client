@@ -10,8 +10,52 @@
     </md-toolbar>
     <md-dialog-content>
         <div class="md-dialog-content" layout="column">
-            <p translate>Sending generates the report from the analysis as it is now. Each sending is a new version; the previous ones are kept.</p>
-            <md-progress-linear ng-if="isLoading || isSending" md-mode="indeterminate"></md-progress-linear>
+            <div ng-if="canSubmit" layout="column" class="md-padding-bottom">
+                <h3 class="md-subhead" translate>Send a report</h3>
+
+                <div ng-if="signedReports.length > 0" layout="column">
+                    <strong translate>Signed reports</strong>
+                    <div layout="row" layout-align="start center" ng-repeat="signedReport in signedReports">
+                        <md-icon style="margin: 0 12px 0 0">done_all</md-icon>
+                        <span flex>{{ signedReport.title }} - {{ 'Signed on' | translate }} {{ signedReport.signedAt | date:'dd/MM/yyyy HH:mm' }} ({{ formatSize(signedReport.fileSize) }})</span>
+                        <md-button class="md-icon-button md-primary" ng-click="readSigned(signedReport)" aria-label="{{ 'Read the report' | translate }}">
+                            <md-tooltip md-direction="top">{{ 'Read the report' | translate }}</md-tooltip>
+                            <md-icon>visibility</md-icon>
+                        </md-button>
+                        <md-button class="md-icon-button md-primary" ng-click="downloadSigned(signedReport)" aria-label="{{ 'Download' | translate }}">
+                            <md-tooltip md-direction="top">{{ 'Download' | translate }}</md-tooltip>
+                            <md-icon>file_download</md-icon>
+                        </md-button>
+                        <md-button class="md-primary md-raised" ng-disabled="isLoading || isSending" ng-click="submitSigned(signedReport)">{{ 'Submit this report' | translate }}</md-button>
+                    </div>
+                </div>
+                <p ng-if="requiresSignature && signedReports.length === 0" translate>This campaign requires a signed report. Sign the final report in the electronic signature tab: it will then appear here.</p>
+
+                <div ng-if="!requiresSignature" layout="column">
+                    <p translate>The report is generated from the analysis as it is now. Read it, then submit it: the file you read is exactly the one sent.</p>
+                    <div>
+                        <md-button class="md-raised" ng-if="!preparedReport" ng-disabled="isLoading || isPreparing || isSending" ng-click="prepare()">{{ 'Prepare the report' | translate }}</md-button>
+                    </div>
+                    <div ng-if="preparedReport" layout="row" layout-align="start center">
+                        <md-icon style="margin: 0 12px 0 0">description</md-icon>
+                        <span flex>{{ 'Prepared report' | translate }} ({{ formatSize(preparedReport.fileSize) }}) - {{ 'valid until' | translate }} {{ preparedReport.expiresAt | date:'HH:mm' }}</span>
+                        <md-button class="md-icon-button md-primary" ng-click="readPrepared()" aria-label="{{ 'Read the report' | translate }}">
+                            <md-tooltip md-direction="top">{{ 'Read the report' | translate }}</md-tooltip>
+                            <md-icon>visibility</md-icon>
+                        </md-button>
+                        <md-button class="md-icon-button md-primary" ng-click="downloadPrepared()" aria-label="{{ 'Download' | translate }}">
+                            <md-tooltip md-direction="top">{{ 'Download' | translate }}</md-tooltip>
+                            <md-icon>file_download</md-icon>
+                        </md-button>
+                        <md-button class="md-icon-button md-warn" ng-disabled="isSending" ng-click="discardPrepared()" aria-label="{{ 'Discard' | translate }}">
+                            <md-tooltip md-direction="top">{{ 'Discard' | translate }}</md-tooltip>
+                            <md-icon>close</md-icon>
+                        </md-button>
+                        <md-button class="md-primary md-raised" ng-disabled="isSending" ng-click="submitPrepared()">{{ 'Submit this report' | translate }}</md-button>
+                    </div>
+                </div>
+            </div>
+            <md-progress-linear ng-if="isLoading || isPreparing || isSending" md-mode="indeterminate"></md-progress-linear>
             <p ng-if="!isLoading && submissions.length === 0" translate>No report has been sent yet.</p>
             <p ng-if="synchronization !== 'ok'">
                 <md-icon class="analysis-review-warning">warning</md-icon>
@@ -53,8 +97,5 @@
     </md-dialog-content>
     <md-dialog-actions>
         <md-button ng-click="close()">{{ 'Close' | translate }}</md-button>
-        <md-button class="md-primary md-raised" ng-if="canSubmit" ng-disabled="isLoading || isSending" ng-click="send()">
-            <span translate>Send a new version</span>
-        </md-button>
     </md-dialog-actions>
 </md-dialog>

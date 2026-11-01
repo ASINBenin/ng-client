@@ -73,7 +73,7 @@
                             <md-tooltip md-direction="top">{{ 'Manage access' | translate }}</md-tooltip>
                             <md-icon>people</md-icon>
                         </md-button>
-                        <md-button class="md-icon-button md-primary" ng-if="campaign.anrId" ng-click="showReports({id: campaign.anrId, label: campaign.label}, campaign.status !== 'closed', $event)" aria-label="{{ 'Reports' | translate }}">
+                        <md-button class="md-icon-button md-primary" ng-if="campaign.anrId" ng-click="showReports({id: campaign.anrId, label: campaign.label}, campaign.status !== 'closed', campaign.isSignatureRequired, $event)" aria-label="{{ 'Reports' | translate }}">
                             <md-tooltip md-direction="top">{{ 'Reports' | translate }}</md-tooltip>
                             <md-icon>description</md-icon>
                         </md-button>
@@ -108,7 +108,7 @@
                             <md-tooltip md-direction="top">{{ 'Open the analysis' | translate }}</md-tooltip>
                             <md-icon>folder_open</md-icon>
                         </md-button>
-                        <md-button class="md-icon-button md-primary" ng-click="showReports(anr, anr.rwd === 1, $event)" aria-label="{{ 'Reports' | translate }}">
+                        <md-button class="md-icon-button md-primary" ng-click="showReports(anr, anr.rwd === 1, false, $event)" aria-label="{{ 'Reports' | translate }}">
                             <md-tooltip md-direction="top">{{ 'Reports' | translate }}</md-tooltip>
                             <md-icon>description</md-icon>
                         </md-button>

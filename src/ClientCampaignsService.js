@@ -2,9 +2,9 @@
 
     angular
         .module('ClientApp')
-        .factory('ClientCampaignsService', ['$resource', ClientCampaignsService]);
+        .factory('ClientCampaignsService', ['$resource', '$http', ClientCampaignsService]);
 
-    function ClientCampaignsService($resource) {
+    function ClientCampaignsService($resource, $http) {
         var campaignsResource = $resource('api/campaigns', {}, {
             'query': {
                 isArray: false
@@ -31,6 +31,16 @@
             },
             'submit': {
                 method: 'POST'
+            }
+        });
+        var preparedReportsResource = $resource('api/client-anr/:id/prepared-reports', {id: '@id'}, {
+            'prepare': {
+                method: 'POST'
+            }
+        });
+        var signedReportsResource = $resource('api/client-anr/:id/signed-reports', {id: '@id'}, {
+            'query': {
+                method: 'GET'
             }
         });
 
@@ -70,10 +80,44 @@
         };
 
         /**
-         * Génère le rapport de l'analyse et l'envoie au BackOffice : renvoie la version créée { submission: {} }.
+         * Génère le rapport final de l'analyse et le garde de côté, valable une heure :
+         * { preparedReport: { token, fileSize, createdAt, expiresAt } }.
          */
-        var submitReport = function (anrId) {
-            return submissionsResource.submit({id: anrId}, {}).$promise;
+        var prepareReport = function (anrId) {
+            return preparedReportsResource.prepare({id: anrId}, {}).$promise;
+        };
+
+        /**
+         * Rapports finaux de l'analyse signés dans le module de signature : { signedReports: [{ id, title, signedAt, fileSize }] }.
+         */
+        var getSignedReports = function (anrId) {
+            return signedReportsResource.query({id: anrId}).$promise;
+        };
+
+        /**
+         * Envoie au BackOffice un rapport déjà relu : data vaut { token } (rapport préparé) ou { signatureRequestId }
+         * (rapport signé). Renvoie la version créée { submission: {} }.
+         */
+        var submitReport = function (anrId, data) {
+            return submissionsResource.submit({id: anrId}, data).$promise;
+        };
+
+        /**
+         * Adresse locale d'un PDF du serveur, à ouvrir dans un onglet : la lecture doit porter le jeton de session.
+         */
+        var getPdfUrl = function (path) {
+            return getPdf(path).then(function (data) {
+                return URL.createObjectURL(new Blob([data], {type: 'application/pdf'}));
+            });
+        };
+
+        /**
+         * Contenu d'un PDF du serveur.
+         */
+        var getPdf = function (path) {
+            return $http.get(path, {responseType: 'arraybuffer'}).then(function (response) {
+                return response.data;
+            });
         };
 
         return {
@@ -82,7 +126,11 @@
             getAccess: getAccess,
             setAccess: setAccess,
             getSubmissions: getSubmissions,
-            submitReport: submitReport
+            prepareReport: prepareReport,
+            getSignedReports: getSignedReports,
+            submitReport: submitReport,
+            getPdfUrl: getPdfUrl,
+            getPdf: getPdf
         };
     }
 

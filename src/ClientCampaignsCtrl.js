@@ -4,14 +4,14 @@
         .module('ClientApp')
         .controller('ClientCampaignsCtrl', [
             '$scope', '$rootScope', '$mdDialog', 'gettextCatalog', 'toastr', 'ClientCampaignsService',
-            'ClientAnrService', ClientCampaignsCtrl
+            'ClientAnrService', 'DownloadService', ClientCampaignsCtrl
         ]);
 
     /**
      * Campaigns the entity is invited to, received from the BackOffice.
      */
     function ClientCampaignsCtrl($scope, $rootScope, $mdDialog, gettextCatalog, toastr, ClientCampaignsService,
-                                 ClientAnrService) {
+                                 ClientAnrService, DownloadService) {
         $scope.campaigns = [];
         $scope.freeAnrs = [];
         $scope.synchronization = 'ok';
@@ -133,22 +133,26 @@
          * History of the reports sent to the BackOffice for an analysis, and sending of a new version.
          * Reports can be sent while the campaign is open; an analysis outside any campaign needs write access.
          */
-        $scope.showReports = function (anr, canSubmit, ev) {
+        $scope.showReports = function (anr, canSubmit, requiresSignature, ev) {
             $mdDialog.show({
-                controller: ['$scope', '$mdDialog', 'anr', 'canSubmit', ReportsDialogCtrl],
+                controller: ['$scope', '$mdDialog', '$window', 'anr', 'canSubmit', 'requiresSignature', ReportsDialogCtrl],
                 templateUrl: 'views/dialogs/campaign.reports.html',
                 targetEvent: ev,
-                locals: {anr: anr, canSubmit: canSubmit},
+                locals: {anr: anr, canSubmit: canSubmit, requiresSignature: requiresSignature},
                 clickOutsideToClose: false
             });
         };
 
-        function ReportsDialogCtrl($scope, $mdDialog, anr, canSubmit) {
+        function ReportsDialogCtrl($scope, $mdDialog, $window, anr, canSubmit, requiresSignature) {
             $scope.anr = anr;
             $scope.canSubmit = canSubmit;
+            $scope.requiresSignature = requiresSignature;
             $scope.submissions = [];
+            $scope.signedReports = [];
+            $scope.preparedReport = null;
             $scope.synchronization = 'ok';
             $scope.isLoading = true;
+            $scope.isPreparing = false;
             $scope.isSending = false;
 
             ClientCampaignsService.getSubmissions(anr.id).then(function (data) {
@@ -157,6 +161,11 @@
             }).finally(function () {
                 $scope.isLoading = false;
             });
+            if (canSubmit) {
+                ClientCampaignsService.getSignedReports(anr.id).then(function (data) {
+                    $scope.signedReports = data.signedReports;
+                });
+            }
 
             $scope.formatSize = function (bytes) {
                 return bytes >= 1048576 ? (bytes / 1048576).toFixed(1) + ' MB' : Math.ceil(bytes / 1024) + ' KB';
@@ -166,17 +175,80 @@
                 $mdDialog.hide();
             };
 
-            $scope.send = function () {
+            /**
+             * Opens a PDF of the server in a new tab. The tab is opened at once, from the click, then receives the
+             * file: this way the browser does not take it for an unwanted popup.
+             */
+            function openPdf(path) {
+                var tab = $window.open('', '_blank');
+                ClientCampaignsService.getPdfUrl(path).then(function (url) {
+                    if (tab) {
+                        tab.location.href = url;
+                    } else {
+                        $window.location.href = url;
+                    }
+                }, function () {
+                    if (tab) {
+                        tab.close();
+                    }
+                });
+            }
+
+            $scope.prepare = function () {
+                $scope.isPreparing = true;
+                ClientCampaignsService.prepareReport(anr.id).then(function (data) {
+                    $scope.preparedReport = data.preparedReport;
+                }).finally(function () {
+                    $scope.isPreparing = false;
+                });
+            };
+
+            $scope.readPrepared = function () {
+                openPdf('api/client-anr/' + anr.id + '/prepared-reports/' + $scope.preparedReport.token);
+            };
+
+            $scope.discardPrepared = function () {
+                $scope.preparedReport = null;
+            };
+
+            function downloadPdf(path, fileName) {
+                ClientCampaignsService.getPdf(path).then(function (data) {
+                    DownloadService.downloadBlob(data, fileName, 'application/pdf');
+                });
+            }
+
+            $scope.downloadPrepared = function () {
+                downloadPdf('api/client-anr/' + anr.id + '/prepared-reports/' + $scope.preparedReport.token, 'rapport.pdf');
+            };
+
+            $scope.downloadSigned = function (signedReport) {
+                downloadPdf('api/client-anr/' + anr.id + '/signed-reports/' + signedReport.id, 'rapport-signe.pdf');
+            };
+
+            $scope.readSigned = function (signedReport) {
+                openPdf('api/client-anr/' + anr.id + '/signed-reports/' + signedReport.id);
+            };
+
+            function submit(data) {
                 $scope.isSending = true;
-                ClientCampaignsService.submitReport(anr.id).then(function (data) {
-                    $scope.submissions.unshift(data.submission);
+                ClientCampaignsService.submitReport(anr.id, data).then(function (response) {
+                    $scope.submissions.unshift(response.submission);
+                    $scope.preparedReport = null;
                     toastr.success(gettextCatalog.getString(
                         'Version {{version}} of the report has been sent to the BackOffice.',
-                        {version: data.submission.version}
+                        {version: response.submission.version}
                     ));
                 }).finally(function () {
                     $scope.isSending = false;
                 });
+            }
+
+            $scope.submitPrepared = function () {
+                submit({token: $scope.preparedReport.token});
+            };
+
+            $scope.submitSigned = function (signedReport) {
+                submit({signatureRequestId: signedReport.id});
             };
         }
 

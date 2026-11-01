@@ -7640,3 +7640,36 @@ msgstr "La campagne est clôturée : cette analyse n'est plus modifiable."
 
 msgid "Invited"
 msgstr "Invitée"
+
+msgid "Send a report"
+msgstr "Envoyer un rapport"
+
+msgid "Signed reports"
+msgstr "Rapports signés"
+
+msgid "Signed on"
+msgstr "Signé le"
+
+msgid "Read the report"
+msgstr "Relire le rapport"
+
+msgid "Submit this report"
+msgstr "Soumettre ce rapport"
+
+msgid "This campaign requires a signed report. Sign the final report in the electronic signature tab: it will then appear here."
+msgstr "Cette campagne exige un rapport signé. Faites signer le rapport final dans l'onglet de signature électronique : il apparaîtra alors ici."
+
+msgid "The report is generated from the analysis as it is now. Read it, then submit it: the file you read is exactly the one sent."
+msgstr "Le rapport est généré à partir de l'analyse dans son état actuel. Relisez-le, puis soumettez-le : le fichier relu est exactement celui qui est envoyé."
+
+msgid "Prepare the report"
+msgstr "Préparer le rapport"
+
+msgid "Prepared report"
+msgstr "Rapport préparé"
+
+msgid "valid until"
+msgstr "valable jusqu'à"
+
+msgid "Discard"
+msgstr "Abandonner"
