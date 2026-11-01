@@ -48,7 +48,7 @@
                   </md-button>
                   <md-button layout="row" class="md-icon-button" style="width: 70px" ui-sref="main.project.anr({modelId: anr.id})">
                       <md-icon class="md-primary">visibility</md-icon>
-                      <md-button  class="md-primary md-icon-button" ng-disabled="!anr.rwd" ng-click="deleteClientAnrGlobal($event, anr)">
+                      <md-button  class="md-primary md-icon-button" ng-disabled="!anr.rwd || anr.campaignLocked" ng-click="deleteClientAnrGlobal($event, anr)">
                         <md-icon>edit</md-icon>
                       </md-button>
                       <md-tooltip>{{ (anr.rwd ? 'Read and write'  : 'Read') | translate }}</md-tooltip>
@@ -69,7 +69,7 @@
                       <md-icon class="md-light-theme material-icons">error</md-icon>
                       <md-tooltip>{{ 'Get import error' | translate }}</md-tooltip>
                   </md-button>
-                  <md-button  class="md-warn md-icon-button " ng-disabled="!anr.rwd || anr.status == 2 || anr.status == 3" ng-click="deleteClientAnrGlobal($event, anr)">
+                  <md-button  class="md-warn md-icon-button " ng-disabled="!anr.rwd || anr.status == 2 || anr.status == 3 || anr.campaignLocked" ng-click="deleteClientAnrGlobal($event, anr)">
                     <md-icon>delete</md-icon>
                     <md-tooltip>{{ 'Delete' | translate }}</md-tooltip>
                   </md-button>

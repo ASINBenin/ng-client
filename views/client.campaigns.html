@@ -58,7 +58,7 @@
                         <span ng-if="campaign.participationStatus === 'participating'" translate>Participating</span>
                         <span ng-if="campaign.participationStatus === 'invited'" translate>Invited</span>
                     </td>
-                    <td md-cell>
+                    <td md-cell style="white-space: nowrap">
                         <md-button class="md-icon-button md-primary" ng-if="canParticipate(campaign)"
                                    ng-disabled="campaign.isSaving" ng-click="participate(campaign, $event)"
                                    aria-label="{{ (campaign.participationStatus === 'invited' ? 'Participate' : 'Create the analysis') | translate }}">
