@@ -193,3 +193,11 @@ md-sidenav.md-sidenav-left{
   white-space: normal;
   overflow-wrap: anywhere;
 }
+
+/* Moins d'espace entre les colonnes : le nom de la campagne garde de la place sur un écran moyen */
+table.md-table.campaigns-table:not(.md-row-select) th.md-column:nth-child(n+2):nth-last-child(n+2),
+table.md-table.campaigns-table:not(.md-row-select) td.md-cell:nth-child(n+2):nth-last-child(n+2),
+table.md-table.campaigns-table:not(.md-row-select) th.md-column:first-child,
+table.md-table.campaigns-table:not(.md-row-select) td.md-cell:first-child {
+  padding-right: 24px;
+}

@@ -17,7 +17,7 @@
             </md-card-content>
 
             <md-table-container ng-if="campaigns.length > 0">
-                <table md-table>
+                <table md-table class="campaigns-table">
                     <thead md-head>
                     <tr md-row>
                         <th md-column><span translate>Campaign</span></th>
@@ -40,9 +40,9 @@
                                 <md-tooltip class="campaign-description-tooltip" md-direction="bottom">{{ campaign.description }}</md-tooltip>
                             </div>
                         </td>
-                        <td md-cell>{{ campaign.startDate }}</td>
-                        <td md-cell>{{ campaign.responseDeadline }}</td>
-                        <td md-cell>{{ campaign.endDate }}</td>
+                        <td md-cell>{{ campaign.startDate | date:'dd/MM/yyyy' }}</td>
+                        <td md-cell>{{ campaign.responseDeadline | date:'dd/MM/yyyy' }}</td>
+                        <td md-cell>{{ campaign.endDate | date:'dd/MM/yyyy' }}</td>
                         <td md-cell><md-icon ng-if="campaign.isSignatureRequired">check</md-icon></td>
                         <td md-cell ng-switch="getPhase(campaign)">
                             <span ng-switch-when="upcoming" translate>Upcoming</span>
