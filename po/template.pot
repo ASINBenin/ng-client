@@ -7961,6 +7961,9 @@ msgstr ""
 msgid "Analyses outside any campaign"
 msgstr ""
 
+msgid "You have no analysis outside a campaign."
+msgstr ""
+
 msgid "You can also send the report of any of your analyses to the BackOffice."
 msgstr ""
 

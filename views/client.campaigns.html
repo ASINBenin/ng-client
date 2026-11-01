@@ -1,121 +1,120 @@
 <md-card md-theme="light" layout="column" class="main-card" ng-controller="ClientCampaignsCtrl">
-        <md-toolbar class="md-table-toolbar md-default">
-            <div class="md-toolbar-tools">
-                <h2 class="md-title" translate>Campaigns</h2>
+    <md-card-content ng-if="synchronization === 'failed'">
+        <md-icon class="analysis-review-warning">warning</md-icon>
+        <span translate>The BackOffice could not be reached: the list below is the last one received.</span>
+    </md-card-content>
+    <md-card-content ng-if="synchronization === 'notConfigured'">
+        <md-icon class="analysis-review-warning">warning</md-icon>
+        <span translate>This entity is not connected to the BackOffice yet.</span>
+    </md-card-content>
+
+    <md-progress-linear ng-if="isLoading" md-mode="indeterminate"></md-progress-linear>
+
+    <md-tabs md-border-bottom flex>
+        <md-tab label="{{ 'Campaigns' | translate }} ({{ campaigns.length }})">
+            <md-card-content ng-if="!isLoading && campaigns.length === 0 && synchronization === 'ok'">
+                <span translate>You are not invited to any campaign yet.</span>
+            </md-card-content>
+
+            <md-table-container ng-if="campaigns.length > 0">
+                <table md-table>
+                    <thead md-head>
+                    <tr md-row>
+                        <th md-column><span translate>Campaign</span></th>
+                        <th md-column><span translate>Start date</span></th>
+                        <th md-column><span translate>Response deadline</span></th>
+                        <th md-column><span translate>End date</span></th>
+                        <th md-column><span translate>Signature required</span></th>
+                        <th md-column><span translate>Status</span></th>
+                        <th md-column><span translate>Participation</span></th>
+                        <th md-column><span translate>Actions</span></th>
+                    </tr>
+                    </thead>
+
+                    <tbody md-body>
+                    <tr md-row ng-repeat="campaign in campaigns">
+                        <td md-cell>
+                            <strong>{{ campaign.label }}</strong>
+                            <div class="md-caption campaign-description" ng-if="campaign.description">
+                                {{ campaign.description }}
+                                <md-tooltip class="campaign-description-tooltip" md-direction="bottom">{{ campaign.description }}</md-tooltip>
+                            </div>
+                        </td>
+                        <td md-cell>{{ campaign.startDate }}</td>
+                        <td md-cell>{{ campaign.responseDeadline }}</td>
+                        <td md-cell>{{ campaign.endDate }}</td>
+                        <td md-cell><md-icon ng-if="campaign.isSignatureRequired">check</md-icon></td>
+                        <td md-cell ng-switch="getPhase(campaign)">
+                            <span ng-switch-when="upcoming" translate>Upcoming</span>
+                            <span ng-switch-when="open" translate>Open</span>
+                            <span ng-switch-when="noAnswer" translate>No answer</span>
+                            <span ng-switch-when="closed" translate>Closed</span>
+                        </td>
+                        <td md-cell>
+                            <span ng-if="campaign.participationStatus === 'participating'" translate>Participating</span>
+                            <span ng-if="campaign.participationStatus === 'invited'" translate>Invited</span>
+                        </td>
+                        <td md-cell style="white-space: nowrap">
+                            <md-button class="md-icon-button md-primary" ng-if="canParticipate(campaign)"
+                                       ng-disabled="campaign.isSaving" ng-click="participate(campaign, $event)"
+                                       aria-label="{{ (campaign.participationStatus === 'invited' ? 'Participate' : 'Create the analysis') | translate }}">
+                                <md-tooltip md-direction="top">{{ (campaign.participationStatus === 'invited' ? 'Participate' : 'Create the analysis') | translate }}</md-tooltip>
+                                <md-icon>check_circle</md-icon>
+                            </md-button>
+                            <md-button class="md-icon-button md-primary" ng-if="campaign.anrId" ui-sref="main.project.anr({modelId: campaign.anrId})" aria-label="{{ 'Open the analysis' | translate }}">
+                                <md-tooltip md-direction="top">{{ 'Open the analysis' | translate }}</md-tooltip>
+                                <md-icon>folder_open</md-icon>
+                            </md-button>
+                            <md-button class="md-icon-button md-primary" ng-if="campaign.anrId" ng-click="manageAccess(campaign, $event)" aria-label="{{ 'Manage access' | translate }}">
+                                <md-tooltip md-direction="top">{{ 'Manage access' | translate }}</md-tooltip>
+                                <md-icon>people</md-icon>
+                            </md-button>
+                            <md-button class="md-icon-button md-primary" ng-if="campaign.anrId" ng-click="showReports({id: campaign.anrId, label: campaign.label}, campaign.status !== 'closed', campaign.isSignatureRequired, $event)" aria-label="{{ 'Reports' | translate }}">
+                                <md-tooltip md-direction="top">{{ 'Reports' | translate }}</md-tooltip>
+                                <md-icon>description</md-icon>
+                            </md-button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </md-table-container>
+        </md-tab>
+
+        <md-tab label="{{ 'Analyses outside any campaign' | translate }} ({{ freeAnrs.length }})">
+            <md-card-content ng-if="freeAnrs.length === 0">
+                <span translate>You have no analysis outside a campaign.</span>
+            </md-card-content>
+
+            <div ng-if="freeAnrs.length > 0">
+                <md-card-content>
+                    <span translate>You can also send the report of any of your analyses to the BackOffice.</span>
+                </md-card-content>
+                <md-table-container>
+                    <table md-table>
+                        <thead md-head>
+                        <tr md-row>
+                            <th md-column><span translate>Analysis</span></th>
+                            <th md-column><span translate>Actions</span></th>
+                        </tr>
+                        </thead>
+                        <tbody md-body>
+                        <tr md-row ng-repeat="anr in freeAnrs">
+                            <td md-cell><strong>{{ anr.label }}</strong></td>
+                            <td md-cell>
+                                <md-button class="md-icon-button md-primary" ui-sref="main.project.anr({modelId: anr.id})" aria-label="{{ 'Open the analysis' | translate }}">
+                                    <md-tooltip md-direction="top">{{ 'Open the analysis' | translate }}</md-tooltip>
+                                    <md-icon>folder_open</md-icon>
+                                </md-button>
+                                <md-button class="md-icon-button md-primary" ng-click="showReports(anr, anr.rwd === 1, false, $event)" aria-label="{{ 'Reports' | translate }}">
+                                    <md-tooltip md-direction="top">{{ 'Reports' | translate }}</md-tooltip>
+                                    <md-icon>description</md-icon>
+                                </md-button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </md-table-container>
             </div>
-        </md-toolbar>
-
-        <md-card-content ng-if="synchronization === 'failed'">
-            <md-icon class="analysis-review-warning">warning</md-icon>
-            <span translate>The BackOffice could not be reached: the list below is the last one received.</span>
-        </md-card-content>
-        <md-card-content ng-if="synchronization === 'notConfigured'">
-            <md-icon class="analysis-review-warning">warning</md-icon>
-            <span translate>This entity is not connected to the BackOffice yet.</span>
-        </md-card-content>
-
-        <md-progress-linear ng-if="isLoading" md-mode="indeterminate"></md-progress-linear>
-
-        <md-card-content ng-if="!isLoading && campaigns.length === 0 && synchronization === 'ok'">
-            <span translate>You are not invited to any campaign yet.</span>
-        </md-card-content>
-
-        <md-table-container flex ng-if="campaigns.length > 0">
-            <table md-table>
-                <thead md-head>
-                <tr md-row>
-                    <th md-column><span translate>Campaign</span></th>
-                    <th md-column><span translate>Start date</span></th>
-                    <th md-column><span translate>Response deadline</span></th>
-                    <th md-column><span translate>End date</span></th>
-                    <th md-column><span translate>Signature required</span></th>
-                    <th md-column><span translate>Status</span></th>
-                    <th md-column><span translate>Participation</span></th>
-                    <th md-column><span translate>Actions</span></th>
-                </tr>
-                </thead>
-
-                <tbody md-body>
-                <tr md-row ng-repeat="campaign in campaigns">
-                    <td md-cell>
-                        <strong>{{ campaign.label }}</strong>
-                        <div class="md-caption campaign-description" ng-if="campaign.description">
-                            {{ campaign.description }}
-                            <md-tooltip class="campaign-description-tooltip" md-direction="bottom">{{ campaign.description }}</md-tooltip>
-                        </div>
-                    </td>
-                    <td md-cell>{{ campaign.startDate }}</td>
-                    <td md-cell>{{ campaign.responseDeadline }}</td>
-                    <td md-cell>{{ campaign.endDate }}</td>
-                    <td md-cell><md-icon ng-if="campaign.isSignatureRequired">check</md-icon></td>
-                    <td md-cell ng-switch="getPhase(campaign)">
-                        <span ng-switch-when="upcoming" translate>Upcoming</span>
-                        <span ng-switch-when="open" translate>Open</span>
-                        <span ng-switch-when="noAnswer" translate>No answer</span>
-                        <span ng-switch-when="closed" translate>Closed</span>
-                    </td>
-                    <td md-cell>
-                        <span ng-if="campaign.participationStatus === 'participating'" translate>Participating</span>
-                        <span ng-if="campaign.participationStatus === 'invited'" translate>Invited</span>
-                    </td>
-                    <td md-cell style="white-space: nowrap">
-                        <md-button class="md-icon-button md-primary" ng-if="canParticipate(campaign)"
-                                   ng-disabled="campaign.isSaving" ng-click="participate(campaign, $event)"
-                                   aria-label="{{ (campaign.participationStatus === 'invited' ? 'Participate' : 'Create the analysis') | translate }}">
-                            <md-tooltip md-direction="top">{{ (campaign.participationStatus === 'invited' ? 'Participate' : 'Create the analysis') | translate }}</md-tooltip>
-                            <md-icon>check_circle</md-icon>
-                        </md-button>
-                        <md-button class="md-icon-button md-primary" ng-if="campaign.anrId" ui-sref="main.project.anr({modelId: campaign.anrId})" aria-label="{{ 'Open the analysis' | translate }}">
-                            <md-tooltip md-direction="top">{{ 'Open the analysis' | translate }}</md-tooltip>
-                            <md-icon>folder_open</md-icon>
-                        </md-button>
-                        <md-button class="md-icon-button md-primary" ng-if="campaign.anrId" ng-click="manageAccess(campaign, $event)" aria-label="{{ 'Manage access' | translate }}">
-                            <md-tooltip md-direction="top">{{ 'Manage access' | translate }}</md-tooltip>
-                            <md-icon>people</md-icon>
-                        </md-button>
-                        <md-button class="md-icon-button md-primary" ng-if="campaign.anrId" ng-click="showReports({id: campaign.anrId, label: campaign.label}, campaign.status !== 'closed', campaign.isSignatureRequired, $event)" aria-label="{{ 'Reports' | translate }}">
-                            <md-tooltip md-direction="top">{{ 'Reports' | translate }}</md-tooltip>
-                            <md-icon>description</md-icon>
-                        </md-button>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </md-table-container>
-
-    <div ng-if="freeAnrs.length > 0">
-        <md-toolbar class="md-table-toolbar md-default">
-            <div class="md-toolbar-tools">
-                <h2 class="md-title" translate>Analyses outside any campaign</h2>
-            </div>
-        </md-toolbar>
-        <md-card-content>
-            <span translate>You can also send the report of any of your analyses to the BackOffice.</span>
-        </md-card-content>
-        <md-table-container flex>
-            <table md-table>
-                <thead md-head>
-                <tr md-row>
-                    <th md-column><span translate>Analysis</span></th>
-                    <th md-column><span translate>Actions</span></th>
-                </tr>
-                </thead>
-                <tbody md-body>
-                <tr md-row ng-repeat="anr in freeAnrs">
-                    <td md-cell><strong>{{ anr.label }}</strong></td>
-                    <td md-cell>
-                        <md-button class="md-icon-button md-primary" ui-sref="main.project.anr({modelId: anr.id})" aria-label="{{ 'Open the analysis' | translate }}">
-                            <md-tooltip md-direction="top">{{ 'Open the analysis' | translate }}</md-tooltip>
-                            <md-icon>folder_open</md-icon>
-                        </md-button>
-                        <md-button class="md-icon-button md-primary" ng-click="showReports(anr, anr.rwd === 1, false, $event)" aria-label="{{ 'Reports' | translate }}">
-                            <md-tooltip md-direction="top">{{ 'Reports' | translate }}</md-tooltip>
-                            <md-icon>description</md-icon>
-                        </md-button>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </md-table-container>
-    </div>
+        </md-tab>
+    </md-tabs>
 </md-card>

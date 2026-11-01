@@ -7605,6 +7605,9 @@ msgstr "La version {{version}} du rapport a été envoyée au BackOffice."
 msgid "Analyses outside any campaign"
 msgstr "Analyses hors campagne"
 
+msgid "You have no analysis outside a campaign."
+msgstr "Vous n'avez aucune analyse hors campagne."
+
 msgid "You can also send the report of any of your analyses to the BackOffice."
 msgstr "Vous pouvez aussi envoyer au BackOffice le rapport de n'importe laquelle de vos analyses."
 
