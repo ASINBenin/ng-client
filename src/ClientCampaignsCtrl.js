@@ -165,6 +165,12 @@
                 ClientCampaignsService.getSignedReports(anr.id).then(function (data) {
                     $scope.signedReports = data.signedReports;
                 });
+                if (!requiresSignature) {
+                    // A report prepared earlier and not yet sent is still valid for an hour
+                    ClientCampaignsService.getPreparedReport(anr.id).then(function (data) {
+                        $scope.preparedReport = data.preparedReport;
+                    });
+                }
             }
 
             $scope.formatSize = function (bytes) {
@@ -208,7 +214,9 @@
             };
 
             $scope.discardPrepared = function () {
-                $scope.preparedReport = null;
+                ClientCampaignsService.discardPreparedReport(anr.id, $scope.preparedReport.token).then(function () {
+                    $scope.preparedReport = null;
+                });
             };
 
             function downloadPdf(path, fileName) {

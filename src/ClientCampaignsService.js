@@ -36,6 +36,9 @@
         var preparedReportsResource = $resource('api/client-anr/:id/prepared-reports', {id: '@id'}, {
             'prepare': {
                 method: 'POST'
+            },
+            'query': {
+                method: 'GET'
             }
         });
         var signedReportsResource = $resource('api/client-anr/:id/signed-reports', {id: '@id'}, {
@@ -88,6 +91,20 @@
         };
 
         /**
+         * Rapport préparé de l'analyse s'il est encore valable : { preparedReport: { token, ... } | null }.
+         */
+        var getPreparedReport = function (anrId) {
+            return preparedReportsResource.query({id: anrId}).$promise;
+        };
+
+        /**
+         * L'utilisateur renonce au rapport préparé : le serveur supprime le fichier.
+         */
+        var discardPreparedReport = function (anrId, token) {
+            return $http.delete('api/client-anr/' + anrId + '/prepared-reports/' + token);
+        };
+
+        /**
          * Rapports finaux de l'analyse signés dans le module de signature : { signedReports: [{ id, title, signedAt, fileSize }] }.
          */
         var getSignedReports = function (anrId) {
@@ -127,6 +144,8 @@
             setAccess: setAccess,
             getSubmissions: getSubmissions,
             prepareReport: prepareReport,
+            getPreparedReport: getPreparedReport,
+            discardPreparedReport: discardPreparedReport,
             getSignedReports: getSignedReports,
             submitReport: submitReport,
             getPdfUrl: getPdfUrl,
