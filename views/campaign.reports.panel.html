@@ -1,0 +1,107 @@
+<div layout="column" class="campaign-reports">
+    <div ng-if="canSubmit" layout="column" class="campaign-callout">
+        <h3 class="campaign-callout-title"><md-icon>send</md-icon>{{ 'Send a report' | translate }}</h3>
+
+        <div ng-if="signedReports.length > 0" layout="column">
+            <strong translate>Signed reports</strong>
+            <div layout="row" layout-align="start center" ng-repeat="signedReport in signedReports">
+                <md-icon style="margin: 0 12px 0 0">done_all</md-icon>
+                <span flex>{{ signedReport.title }} - {{ 'Signed on' | translate }} {{ signedReport.signedAt | date:'dd/MM/yyyy HH:mm' }} ({{ formatSize(signedReport.fileSize) }})</span>
+                <md-button class="md-icon-button md-primary" ng-click="readSigned(signedReport)" aria-label="{{ 'Read the report' | translate }}">
+                    <md-tooltip md-direction="top">{{ 'Read the report' | translate }}</md-tooltip>
+                    <md-icon>visibility</md-icon>
+                </md-button>
+                <md-button class="md-icon-button md-primary" ng-click="downloadSigned(signedReport)" aria-label="{{ 'Download' | translate }}">
+                    <md-tooltip md-direction="top">{{ 'Download' | translate }}</md-tooltip>
+                    <md-icon>file_download</md-icon>
+                </md-button>
+                <md-button class="md-primary md-raised" ng-disabled="isLoading || isSending" ng-click="submitSigned(signedReport)">{{ 'Submit this report' | translate }}</md-button>
+            </div>
+        </div>
+        <div ng-if="requiresSignature && signedReports.length === 0" layout="row" layout-align="start center" class="campaign-callout-info">
+            <md-icon>info_outline</md-icon>
+            <span flex translate>This campaign requires a signed report. Sign the final report in the electronic signature tab: it will then appear here.</span>
+        </div>
+
+        <div ng-if="!requiresSignature" layout="column">
+            <p translate>The report is generated from the analysis as it is now. Read it, then submit it: the file you read is exactly the one sent.</p>
+            <div>
+                <md-button class="md-raised" ng-if="!preparedReport" ng-disabled="isLoading || isPreparing || isSending" ng-click="prepare()">{{ 'Prepare the report' | translate }}</md-button>
+            </div>
+            <div ng-if="preparedReport" layout="row" layout-align="start center">
+                <md-icon style="margin: 0 12px 0 0">description</md-icon>
+                <span flex>{{ 'Prepared report' | translate }} ({{ formatSize(preparedReport.fileSize) }}) - {{ 'valid until' | translate }} {{ preparedReport.expiresAt | date:'HH:mm' }}</span>
+                <md-button class="md-icon-button md-primary" ng-click="readPrepared()" aria-label="{{ 'Read the report' | translate }}">
+                    <md-tooltip md-direction="top">{{ 'Read the report' | translate }}</md-tooltip>
+                    <md-icon>visibility</md-icon>
+                </md-button>
+                <md-button class="md-icon-button md-primary" ng-click="downloadPrepared()" aria-label="{{ 'Download' | translate }}">
+                    <md-tooltip md-direction="top">{{ 'Download' | translate }}</md-tooltip>
+                    <md-icon>file_download</md-icon>
+                </md-button>
+                <md-button class="md-icon-button md-warn" ng-disabled="isSending" ng-click="discardPrepared()" aria-label="{{ 'Discard' | translate }}">
+                    <md-tooltip md-direction="top">{{ 'Discard' | translate }}</md-tooltip>
+                    <md-icon>close</md-icon>
+                </md-button>
+                <md-button class="md-primary md-raised" ng-disabled="isSending" ng-click="submitPrepared()">{{ 'Submit this report' | translate }}</md-button>
+            </div>
+        </div>
+    </div>
+    <md-progress-linear ng-if="isLoading || isPreparing || isSending" md-mode="indeterminate"></md-progress-linear>
+    <div ng-if="!isLoading && submissions.length === 0" layout="row" layout-align="start center" class="campaign-reports-empty">
+        <md-icon>inbox</md-icon>
+        <span translate>No report has been sent yet.</span>
+    </div>
+    <p ng-if="synchronization !== 'ok'">
+        <md-icon class="analysis-review-warning">warning</md-icon>
+        <span translate>The BackOffice could not be reached: the appreciations shown may be out of date.</span>
+    </p>
+
+    <table md-table ng-if="submissions.length > 0">
+        <thead md-head>
+        <tr md-row>
+            <th md-column><span translate>Version</span></th>
+            <th md-column><span translate>Date</span></th>
+            <th md-column><span translate>Author</span></th>
+            <th md-column md-numeric><span translate>Size</span></th>
+            <th md-column><span translate>Signed</span></th>
+            <th md-column><span translate>Appreciation</span></th>
+        </tr>
+        </thead>
+        <tbody md-body>
+        <!-- Most recent version first: the list comes sorted and a new sending is added on top -->
+        <tr md-row ng-repeat-start="submission in submissions"
+            ng-class="{'appreciation-row-with-comment': submission.appreciation.comment, 'campaign-report-old': !$first}">
+            <td md-cell>
+                {{ submission.version }}
+                <span ng-if="$first" class="campaign-report-latest">{{ 'Latest version' | translate }}</span>
+            </td>
+            <td md-cell>{{ submission.submittedAt | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td md-cell>{{ submission.submittedBy }}</td>
+            <td md-cell md-numeric>{{ formatSize(submission.fileSize) }}</td>
+            <td md-cell><md-icon ng-if="submission.isSigned" class="campaign-report-signed">verified_user</md-icon></td>
+            <td md-cell>
+                <span ng-if="!submission.appreciation">-</span>
+                <span ng-if="submission.appreciation" ng-switch="submission.appreciation.level"
+                      class="appreciation-level appreciation-level-{{ submission.appreciation.level }}">
+                    <span ng-switch-when="insufficient">{{ 'Insufficient' | translate }}</span>
+                    <span ng-switch-when="to_improve">{{ 'To improve' | translate }}</span>
+                    <span ng-switch-when="satisfactory">{{ 'Satisfactory' | translate }}</span>
+                    <span ng-switch-when="very_satisfactory">{{ 'Very satisfactory' | translate }}</span>
+                </span>
+            </td>
+        </tr>
+        <!-- The comment of the ASIN is read in place, under its version -->
+        <tr md-row ng-repeat-end ng-if="submission.appreciation.comment" class="appreciation-comment-row">
+            <td md-cell colspan="6">
+                <div class="appreciation-bubble appreciation-bubble-{{ submission.appreciation.level }}">
+                    <div class="appreciation-bubble-title">
+                        {{ 'Appreciation of the BackOffice' | translate }}<span ng-if="submission.appreciation.appreciatedAt"> · {{ submission.appreciation.appreciatedAt | date:'dd/MM/yyyy HH:mm' }}</span>
+                    </div>
+                    <div class="appreciation-comment" ng-bind-html="submission.appreciation.comment"></div>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>

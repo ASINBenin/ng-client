@@ -897,10 +897,6 @@ msgstr ""
 msgid "Awaiting the import process ..."
 msgstr ""
 
-#: ../ng_sign/src/features/signature-process/SignatureProcessCtrl.js:509
-msgid "BJ eToken certificate"
-msgstr ""
-
 #: ../ng_anr/views/anr.soa.html:87
 msgid "BP"
 msgstr ""
@@ -5773,10 +5769,6 @@ msgstr ""
 msgid "Signature process list"
 msgstr ""
 
-#: ../ng_sign/src/features/signature-process/SignatureProcessCtrl.js:255
-msgid "Signature recorded"
-msgstr ""
-
 #: ../ng_sign/views/signature.list.html:41
 msgid "Signature requests are created when a deliverable is officially exported to PDF."
 msgstr ""
@@ -6506,10 +6498,6 @@ msgstr ""
 msgid "The signature positioning coordinates are required."
 msgstr ""
 
-#: ../ng_sign/src/features/signature-process/SignatureProcessCtrl.js:260
-msgid "The signature procedure has been interrupted."
-msgstr ""
-
 #: ../ng_sign/src/features/signature-callback/SignatureCallbackCtrl.js:85
 msgid "The signature process has been interrupted."
 msgstr ""
@@ -7025,10 +7013,6 @@ msgstr ""
 #: ../ng_anr/views/anr.dashboard.html:390
 #: views/client.project.html:511
 msgid "Type of risks"
-msgstr ""
-
-#: ../ng_sign/views/dialogs/signature.method.dialog.html:20
-msgid "USB token (BJ eToken)"
 msgstr ""
 
 #: ../ng_sign/src/features/signature-process/SignatureProcessCtrl.js:175
@@ -7862,9 +7846,6 @@ msgstr ""
 msgid "Start date"
 msgstr ""
 
-msgid "Response deadline"
-msgstr ""
-
 msgid "End date"
 msgstr ""
 
@@ -7875,9 +7856,6 @@ msgid "Upcoming"
 msgstr ""
 
 msgid "Open"
-msgstr ""
-
-msgid "No answer"
 msgstr ""
 
 msgid "Closed"
@@ -7898,16 +7876,10 @@ msgstr ""
 msgid "Participate"
 msgstr ""
 
-msgid "Participating"
-msgstr ""
-
 msgid "Create the analysis"
 msgstr ""
 
 msgid "Open the analysis"
-msgstr ""
-
-msgid "Do you want to participate in this campaign?"
 msgstr ""
 
 msgid "An analysis based on the campaign model will be created. You cannot withdraw afterwards."
@@ -7946,13 +7918,7 @@ msgstr ""
 msgid "Reports sent to the BackOffice"
 msgstr ""
 
-msgid "Sending generates the report from the analysis as it is now. Each sending is a new version; the previous ones are kept."
-msgstr ""
-
 msgid "No report has been sent yet."
-msgstr ""
-
-msgid "Send a new version"
 msgstr ""
 
 msgid "Version {{version}} of the report has been sent to the BackOffice."
@@ -7995,9 +7961,6 @@ msgid "This analysis belongs to a campaign: the scales, the knowledge base and t
 msgstr ""
 
 msgid "The campaign is closed: this analysis can no longer be modified."
-msgstr ""
-
-msgid "Invited"
 msgstr ""
 
 msgid "Send a report"

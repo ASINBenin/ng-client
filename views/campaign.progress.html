@@ -1,0 +1,17 @@
+<span ng-switch="getProgress(campaign)">
+    <span ng-switch-when="upcoming" class="campaign-progress campaign-progress-neutral">
+        <md-icon>schedule</md-icon>{{ 'Upcoming' | translate }}
+    </span>
+    <span ng-switch-when="toStart" class="campaign-progress campaign-progress-pending">
+        <md-icon>hourglass_empty</md-icon>{{ 'To start' | translate }}
+    </span>
+    <span ng-switch-when="late" class="campaign-progress campaign-progress-late">
+        <md-icon>error_outline</md-icon>{{ 'Late' | translate }}
+    </span>
+    <span ng-switch-when="inProgress" class="campaign-progress campaign-progress-active">
+        <md-icon>play_circle_outline</md-icon>{{ 'Analysis in progress' | translate }}
+    </span>
+    <span ng-switch-when="closed" class="campaign-progress campaign-progress-neutral">
+        <md-icon>lock_outline</md-icon>{{ 'Closed' | translate }}
+    </span>
+</span>

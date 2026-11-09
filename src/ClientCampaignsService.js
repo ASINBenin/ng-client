@@ -5,7 +5,7 @@
         .factory('ClientCampaignsService', ['$resource', '$http', ClientCampaignsService]);
 
     function ClientCampaignsService($resource, $http) {
-        var campaignsResource = $resource('api/campaigns', {}, {
+        var campaignsResource = $resource('api/campaigns/:id', {id: '@id'}, {
             'query': {
                 isArray: false
             }
@@ -52,6 +52,49 @@
          */
         var getCampaigns = function () {
             return campaignsResource.query().$promise;
+        };
+
+        /**
+         * Une campagne de l'entité, après synchronisation : { campaign: {}, synchronization: '' }.
+         */
+        var getCampaign = function (id) {
+            return campaignsResource.get({id: id}).$promise;
+        };
+
+        /**
+         * L'analyse n'est pas encore créée : l'entité n'a pas participé, ou la création a échoué.
+         */
+        function isNotStarted(campaign) {
+            return campaign.participationStatus === 'invited' || !campaign.anrId;
+        }
+
+        function today() {
+            return moment().format('YYYY-MM-DD');
+        }
+
+        /**
+         * La participation est obligatoire : la date de démarrage attendue marque seulement l'entité en retard,
+         * elle peut participer jusqu'à la fin de la campagne.
+         */
+        var getProgress = function (campaign) {
+            if (campaign.status === 'closed') {
+                return 'closed';
+            }
+            if (today() < campaign.startDate) {
+                return 'upcoming';
+            }
+            if (isNotStarted(campaign)) {
+                return today() > campaign.responseDeadline ? 'late' : 'toStart';
+            }
+
+            return 'inProgress';
+        };
+
+        var canParticipate = function (campaign) {
+            return campaign.status !== 'closed'
+                && today() >= campaign.startDate
+                && today() <= campaign.endDate
+                && isNotStarted(campaign);
         };
 
         /**
@@ -139,6 +182,9 @@
 
         return {
             getCampaigns: getCampaigns,
+            getCampaign: getCampaign,
+            getProgress: getProgress,
+            canParticipate: canParticipate,
             participate: participate,
             getAccess: getAccess,
             setAccess: setAccess,

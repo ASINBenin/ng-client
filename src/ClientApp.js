@@ -1,7 +1,7 @@
 angular
 .module('ClientApp', ['ngMaterial', 'ngAnimate', 'toastr', 'ui.router', 'gettext', 'ngResource',
 'LocalStorageModule', 'md.data.table', 'ncy-angular-breadcrumb', 'ngFileUpload',
-'ui.tree', 'ngMessages', 'angularTrix', 'AnrModule', 'SignModule', 'ng-sortable'])
+'ui.tree', 'ngMessages', 'ngSanitize', 'angularTrix', 'AnrModule', 'SignModule', 'ng-sortable'])
 .config(['$mdThemingProvider', '$stateProvider', '$urlRouterProvider', '$resourceProvider',
 'localStorageServiceProvider', '$httpProvider', '$breadcrumbProvider', '$provide', 'gettext', '$mdAriaProvider',
 '$mdDateLocaleProvider', '$locationProvider','$sceDelegateProvider',
@@ -203,12 +203,20 @@ function ($mdThemingProvider, $stateProvider, $urlRouterProvider, $resourceProvi
         label: gettext('Users')
       }
     }).state('main.campaigns', {
-      url: "/campaigns",
+      url: "/campaigns?campaign",
       views: {
         "main@main": {templateUrl: "views/client.campaigns.html"}
       },
       ncyBreadcrumb: {
         label: gettext('Campaigns')
+      }
+    }).state('main.campaigns.detail', {
+      url: "/{campaignId:int}",
+      views: {
+        "main@main": {templateUrl: "views/client.campaign.detail.html"}
+      },
+      ncyBreadcrumb: {
+        label: gettext('Campaign')
       }
     }).state('main.project', {
       url: "/project",
@@ -409,7 +417,7 @@ function ($mdThemingProvider, $stateProvider, $urlRouterProvider, $resourceProvi
                 validationErrors += 'Validation errors in row' + ' #'
                   + messages.row + "\r\n";
               } else {
-                validationErrors += 'Input data validation errors: \r\n';
+                validationErrors += $injector.get('gettextCatalog').getString('Input data validation errors:') + "\r\n";
               }
               if (messages.hasOwnProperty('validationErrors')) {
                 for (const [field, fieldMessage] of Object.entries(messages.validationErrors)) {

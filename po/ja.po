@@ -855,10 +855,6 @@ msgstr ""
 msgid "Awaiting the import process ..."
 msgstr "インポートプロセスを待機中…"
 
-#: ../ng_sign/src/features/signature-process/SignatureProcessCtrl.js:509
-msgid "BJ eToken certificate"
-msgstr ""
-
 #: ../ng_anr/views/anr.soa.html:87
 msgid "BP"
 msgstr "ブイップ"
@@ -5261,10 +5257,6 @@ msgstr ""
 msgid "Signature process list"
 msgstr ""
 
-#: ../ng_sign/src/features/signature-process/SignatureProcessCtrl.js:255
-msgid "Signature recorded"
-msgstr ""
-
 #: ../ng_sign/views/signature.list.html:41
 msgid ""
 "Signature requests are created when a deliverable is officially exported to "
@@ -5998,11 +5990,6 @@ msgstr ""
 msgid "The signature positioning coordinates are required."
 msgstr ""
 
-#: ../ng_sign/src/features/signature-process/SignatureProcessCtrl.js:260
-#, fuzzy
-msgid "The signature procedure has been interrupted."
-msgstr "利害関係者が更新されました。"
-
 #: ../ng_sign/src/features/signature-callback/SignatureCallbackCtrl.js:85
 #, fuzzy
 msgid "The signature process has been interrupted."
@@ -6518,10 +6505,6 @@ msgstr "タイプ"
 #: ../ng_anr/views/anr.dashboard.html:390 views/client.project.html:511
 msgid "Type of risks"
 msgstr "リスクの種類"
-
-#: ../ng_sign/views/dialogs/signature.method.dialog.html:20
-msgid "USB token (BJ eToken)"
-msgstr ""
 
 #: ../ng_sign/src/features/signature-process/SignatureProcessCtrl.js:175
 msgid "Unable to load the document data."

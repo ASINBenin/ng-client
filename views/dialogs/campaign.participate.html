@@ -1,0 +1,30 @@
+<md-dialog md-theme="light" class="dialog-width" aria-label="{{ 'Participate' | translate }}">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>{{ campaign.label }}</h2>
+            <span flex></span>
+            <md-button class="md-icon-button" ng-click="cancel()">
+                <md-icon aria-label="{{ 'Close dialog' | translate }}">close</md-icon>
+            </md-button>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content" layout="column">
+            <p ng-if="campaign.description" style="white-space: pre-line">{{ campaign.description }}</p>
+
+            <table class="md-caption" style="margin-bottom: 16px">
+                <tr><td style="padding-right: 16px">{{ 'Start date' | translate }}</td><td>{{ campaign.startDate | date:'dd/MM/yyyy' }}</td></tr>
+                <tr><td style="padding-right: 16px">{{ 'Expected start date' | translate }}</td><td>{{ campaign.responseDeadline | date:'dd/MM/yyyy' }}</td></tr>
+                <tr><td style="padding-right: 16px">{{ 'End date' | translate }}</td><td>{{ campaign.endDate | date:'dd/MM/yyyy' }}</td></tr>
+                <tr><td style="padding-right: 16px">{{ 'Signature required' | translate }}</td><td>{{ (campaign.isSignatureRequired ? 'Yes' : 'No') | translate }}</td></tr>
+            </table>
+
+            <p><strong translate>An analysis based on the campaign model will be created. You cannot withdraw afterwards.</strong></p>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <md-button ng-click="cancel()">{{ 'Cancel' | translate }}</md-button>
+        <md-button class="md-accent md-hue-3 md-raised" ng-click="participate()">{{ 'I participate' | translate }}</md-button>
+    </md-dialog-actions>
+</md-dialog>

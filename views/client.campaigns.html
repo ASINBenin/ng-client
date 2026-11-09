@@ -1,4 +1,4 @@
-<md-card md-theme="light" layout="column" class="main-card" ng-controller="ClientCampaignsCtrl">
+<md-card md-theme="light" layout="column" class="main-card campaigns-mgmt" ng-controller="ClientCampaignsCtrl">
     <md-card-content ng-if="synchronization === 'failed'">
         <md-icon class="analysis-review-warning">warning</md-icon>
         <span translate>The BackOffice could not be reached: the list below is the last one received.</span>
@@ -8,31 +8,59 @@
         <span translate>This entity is not connected to the BackOffice yet.</span>
     </md-card-content>
 
-    <md-progress-linear ng-if="isLoading" md-mode="indeterminate"></md-progress-linear>
+    <!-- Recherche, filtre et actualisation, comme la page des signatures -->
+    <div layout="row" layout-align="start center" class="campaigns-filters">
+        <form flex name="campaignsFilterForm" style="margin: 0;">
+            <md-input-container class="md-block" style="margin: 0; padding-right: 16px;">
+                <label><md-icon>search</md-icon> {{ 'Search for a campaign or an analysis...' | translate }}</label>
+                <input ng-model="filters.search">
+            </md-input-container>
+        </form>
 
-    <md-tabs md-border-bottom flex>
+        <md-select aria-label="{{ 'Filter by progress' | translate }}" ng-model="filters.progress" class="campaigns-progress-select">
+            <md-option value="all">{{ 'All progress states' | translate }}</md-option>
+            <md-option value="upcoming">{{ 'Upcoming' | translate }}</md-option>
+            <md-option value="toStart">{{ 'To start' | translate }}</md-option>
+            <md-option value="late">{{ 'Late' | translate }}</md-option>
+            <md-option value="inProgress">{{ 'Analysis in progress' | translate }}</md-option>
+            <md-option value="closed">{{ 'Closed' | translate }}</md-option>
+        </md-select>
+
+        <md-button class="md-icon-button md-primary" ng-click="loadData()" ng-disabled="isLoading" aria-label="{{ 'Refresh' | translate }}" style="margin: 0;">
+            <md-tooltip md-direction="bottom">{{ 'Refresh' | translate }}</md-tooltip>
+            <md-icon>refresh</md-icon>
+        </md-button>
+    </div>
+
+    <md-tabs md-border-bottom md-dynamic-height>
         <md-tab label="{{ 'Campaigns' | translate }} ({{ campaigns.length }})">
-            <md-card-content ng-if="!isLoading && campaigns.length === 0 && synchronization === 'ok'">
-                <span translate>You are not invited to any campaign yet.</span>
-            </md-card-content>
+            <div layout="column" layout-align="center center" ng-if="isLoading" class="campaigns-state">
+                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                <span class="campaigns-state-text" translate>Loading campaigns...</span>
+            </div>
 
-            <md-table-container ng-if="campaigns.length > 0">
+            <div layout="column" layout-align="center center" ng-if="!isLoading && (campaigns | filter:filterCampaigns).length === 0" class="campaigns-state">
+                <md-icon class="campaigns-state-icon">flag</md-icon>
+                <h3 class="campaigns-state-title" ng-if="campaigns.length === 0" translate>You are not invited to any campaign yet.</h3>
+                <h3 class="campaigns-state-title" ng-if="campaigns.length > 0" translate>No campaign matches the search.</h3>
+            </div>
+
+            <md-table-container ng-if="!isLoading && (campaigns | filter:filterCampaigns).length > 0">
                 <table md-table class="campaigns-table">
                     <thead md-head>
                     <tr md-row>
                         <th md-column><span translate>Campaign</span></th>
                         <th md-column><span translate>Start date</span></th>
-                        <th md-column><span translate>Response deadline</span></th>
+                        <th md-column><span translate>Expected start date</span></th>
                         <th md-column><span translate>End date</span></th>
                         <th md-column><span translate>Signature required</span></th>
-                        <th md-column><span translate>Status</span></th>
-                        <th md-column><span translate>Participation</span></th>
-                        <th md-column><span translate>Actions</span></th>
+                        <th md-column><span translate>Progress</span></th>
                     </tr>
                     </thead>
 
                     <tbody md-body>
-                    <tr md-row ng-repeat="campaign in campaigns">
+                    <tr md-row class="campaign-row" ng-repeat="campaign in campaigns | filter:filterCampaigns track by campaign.id"
+                        ng-click="openCampaign(campaign)" tabindex="0" ng-keyup="$event.keyCode === 13 && openCampaign(campaign)">
                         <td md-cell>
                             <strong>{{ campaign.label }}</strong>
                             <div class="md-caption campaign-description" ng-if="campaign.description">
@@ -44,36 +72,7 @@
                         <td md-cell>{{ campaign.responseDeadline | date:'dd/MM/yyyy' }}</td>
                         <td md-cell>{{ campaign.endDate | date:'dd/MM/yyyy' }}</td>
                         <td md-cell><md-icon ng-if="campaign.isSignatureRequired">check</md-icon></td>
-                        <td md-cell ng-switch="getPhase(campaign)">
-                            <span ng-switch-when="upcoming" translate>Upcoming</span>
-                            <span ng-switch-when="open" translate>Open</span>
-                            <span ng-switch-when="noAnswer" translate>No answer</span>
-                            <span ng-switch-when="closed" translate>Closed</span>
-                        </td>
-                        <td md-cell>
-                            <span ng-if="campaign.participationStatus === 'participating'" translate>Participating</span>
-                            <span ng-if="campaign.participationStatus === 'invited'" translate>Invited</span>
-                        </td>
-                        <td md-cell style="white-space: nowrap">
-                            <md-button class="md-icon-button md-primary" ng-if="canParticipate(campaign)"
-                                       ng-disabled="campaign.isSaving" ng-click="participate(campaign, $event)"
-                                       aria-label="{{ (campaign.participationStatus === 'invited' ? 'Participate' : 'Create the analysis') | translate }}">
-                                <md-tooltip md-direction="top">{{ (campaign.participationStatus === 'invited' ? 'Participate' : 'Create the analysis') | translate }}</md-tooltip>
-                                <md-icon>check_circle</md-icon>
-                            </md-button>
-                            <md-button class="md-icon-button md-primary" ng-if="campaign.anrId" ui-sref="main.project.anr({modelId: campaign.anrId})" aria-label="{{ 'Open the analysis' | translate }}">
-                                <md-tooltip md-direction="top">{{ 'Open the analysis' | translate }}</md-tooltip>
-                                <md-icon>folder_open</md-icon>
-                            </md-button>
-                            <md-button class="md-icon-button md-primary" ng-if="campaign.anrId" ng-click="manageAccess(campaign, $event)" aria-label="{{ 'Manage access' | translate }}">
-                                <md-tooltip md-direction="top">{{ 'Manage access' | translate }}</md-tooltip>
-                                <md-icon>people</md-icon>
-                            </md-button>
-                            <md-button class="md-icon-button md-primary" ng-if="campaign.anrId" ng-click="showReports({id: campaign.anrId, label: campaign.label}, campaign.status !== 'closed', campaign.isSignatureRequired, $event)" aria-label="{{ 'Reports' | translate }}">
-                                <md-tooltip md-direction="top">{{ 'Reports' | translate }}</md-tooltip>
-                                <md-icon>description</md-icon>
-                            </md-button>
-                        </td>
+                        <td md-cell ng-include="'views/campaign.progress.html'"></td>
                     </tr>
                     </tbody>
                 </table>
@@ -81,31 +80,31 @@
         </md-tab>
 
         <md-tab label="{{ 'Analyses outside any campaign' | translate }} ({{ freeAnrs.length }})">
-            <md-card-content ng-if="freeAnrs.length === 0">
-                <span translate>You have no analysis outside a campaign.</span>
-            </md-card-content>
+            <div layout="column" layout-align="center center" ng-if="(freeAnrs | filter:filterAnrs).length === 0" class="campaigns-state">
+                <md-icon class="campaigns-state-icon">folder_open</md-icon>
+                <h3 class="campaigns-state-title" ng-if="freeAnrs.length === 0" translate>You have no analysis outside a campaign.</h3>
+                <h3 class="campaigns-state-title" ng-if="freeAnrs.length > 0" translate>No analysis matches the search.</h3>
+            </div>
 
-            <div ng-if="freeAnrs.length > 0">
-                <md-card-content>
-                    <span translate>You can also send the report of any of your analyses to the BackOffice.</span>
-                </md-card-content>
+            <div ng-if="(freeAnrs | filter:filterAnrs).length > 0">
+                <p class="campaigns-hint" translate>You can also send the report of any of your analyses to the BackOffice.</p>
                 <md-table-container>
                     <table md-table>
                         <thead md-head>
                         <tr md-row>
                             <th md-column><span translate>Analysis</span></th>
-                            <th md-column><span translate>Actions</span></th>
+                            <th md-column style="text-align: right;"><span translate>Actions</span></th>
                         </tr>
                         </thead>
                         <tbody md-body>
-                        <tr md-row ng-repeat="anr in freeAnrs">
+                        <tr md-row ng-repeat="anr in freeAnrs | filter:filterAnrs track by anr.id">
                             <td md-cell><strong>{{ anr.label }}</strong></td>
-                            <td md-cell>
+                            <td md-cell style="text-align: right;">
                                 <md-button class="md-icon-button md-primary" ui-sref="main.project.anr({modelId: anr.id})" aria-label="{{ 'Open the analysis' | translate }}">
                                     <md-tooltip md-direction="top">{{ 'Open the analysis' | translate }}</md-tooltip>
                                     <md-icon>folder_open</md-icon>
                                 </md-button>
-                                <md-button class="md-icon-button md-primary" ng-click="showReports(anr, anr.rwd === 1, false, $event)" aria-label="{{ 'Reports' | translate }}">
+                                <md-button class="md-icon-button md-primary" ng-click="showReports(anr, $event)" aria-label="{{ 'Reports' | translate }}">
                                     <md-tooltip md-direction="top">{{ 'Reports' | translate }}</md-tooltip>
                                     <md-icon>description</md-icon>
                                 </md-button>

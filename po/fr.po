@@ -868,10 +868,6 @@ msgstr "En attente de signature"
 msgid "Awaiting the import process ..."
 msgstr "En attente du processus d’importation…"
 
-#: ../ng_sign/src/features/signature-process/SignatureProcessCtrl.js:509
-msgid "BJ eToken certificate"
-msgstr "Certificat BJ eToken"
-
 #: ../ng_anr/views/anr.soa.html:87
 msgid "BP"
 msgstr "BP"
@@ -1024,9 +1020,8 @@ msgstr "Annuler"
 #: ../ng_anr/views/edit.evalcontext.html:53
 #: ../ng_anr/views/reassessment-triggers.html:65
 #: ../ng_anr/views/supervisors.html:64
-#, fuzzy
 msgid "Cancel edition"
-msgstr "Annulé"
+msgstr "Annuler la modification"
 
 #: views/client.project.html:66
 msgid "Cancel import process"
@@ -5275,10 +5270,6 @@ msgstr "Processus de signature supprimé."
 msgid "Signature process list"
 msgstr "Liste des processus de signature"
 
-#: ../ng_sign/src/features/signature-process/SignatureProcessCtrl.js:255
-msgid "Signature recorded"
-msgstr "Signature enregistrée"
-
 #: ../ng_sign/views/signature.list.html:41
 msgid ""
 "Signature requests are created when a deliverable is officially exported to "
@@ -6027,10 +6018,6 @@ msgstr "La hauteur de la signature est introuvable."
 msgid "The signature positioning coordinates are required."
 msgstr "Les coordonnées de positionnement de la signature sont obligatoires."
 
-#: ../ng_sign/src/features/signature-process/SignatureProcessCtrl.js:260
-msgid "The signature procedure has been interrupted."
-msgstr "La procédure de signature a été interrompue."
-
 #: ../ng_sign/src/features/signature-callback/SignatureCallbackCtrl.js:85
 msgid "The signature process has been interrupted."
 msgstr "Le processus de signature a été interrompu."
@@ -6555,10 +6542,6 @@ msgstr "Type"
 #: ../ng_anr/views/anr.dashboard.html:390 views/client.project.html:511
 msgid "Type of risks"
 msgstr "Type de risque"
-
-#: ../ng_sign/views/dialogs/signature.method.dialog.html:20
-msgid "USB token (BJ eToken)"
-msgstr "Jeton USB (BJ eToken)"
 
 #: ../ng_sign/src/features/signature-process/SignatureProcessCtrl.js:175
 msgid "Unable to load the document data."
@@ -7389,6 +7372,66 @@ msgstr "{{count}} menaces ont été supprimées."
 msgid "{{count}} vulnerabilities have been deleted."
 msgstr "{{count}} vulnérabilités ont été supprimées."
 
+#: views/dialogs/campaign.participate.html
+msgid "I participate"
+msgstr "Je participe"
+
+#: ../ng_anr/views/supervisors.html
+msgid "Only this user can record the acceptance of the residual risk."
+msgstr "Seul cet utilisateur pourra enregistrer l'acceptation du risque résiduel."
+
+#: ../ng_anr/views/supervisors.html
+msgid "Without a linked account, any analyst can record the decision on behalf of this supervisor."
+msgstr "Sans compte lié, tout analyste peut enregistrer la décision au nom de ce superviseur."
+
+#: src/ClientApp.js
+msgid "Input data validation errors:"
+msgstr "Données saisies invalides :"
+
+#: views/client.campaigns.html
+msgid "Search for a campaign or an analysis..."
+msgstr "Rechercher une campagne ou une analyse..."
+
+#: views/client.campaigns.html
+msgid "Filter by progress"
+msgstr "Filtrer par avancement"
+
+#: views/client.campaigns.html
+msgid "All progress states"
+msgstr "Tous les avancements"
+
+#: views/client.campaigns.html
+msgid "To start"
+msgstr "À démarrer"
+
+#: views/client.campaigns.html
+msgid "Late"
+msgstr "En retard"
+
+#: views/client.campaigns.html
+msgid "Analysis in progress"
+msgstr "Analyse en cours"
+
+#: views/client.campaigns.html
+msgid "Progress"
+msgstr "Avancement"
+
+#: views/client.campaigns.html views/dialogs/campaign.participate.html
+msgid "Expected start date"
+msgstr "Date de démarrage attendue"
+
+#: views/client.campaigns.html
+msgid "Loading campaigns..."
+msgstr "Chargement des campagnes..."
+
+#: views/client.campaigns.html
+msgid "No campaign matches the search."
+msgstr "Aucune campagne ne correspond à la recherche."
+
+#: views/client.campaigns.html
+msgid "No analysis matches the search."
+msgstr "Aucune analyse ne correspond à la recherche."
+
 #, fuzzy
 #~ msgid "Préparer la signature"
 #~ msgstr "Importer une signature"
@@ -7436,8 +7479,8 @@ msgstr "{{count}} vulnérabilités ont été supprimées."
 #~ msgid "No email"
 #~ msgstr "Aucun e-mail"
 
-#~ msgid "Edit supervisor"
-#~ msgstr "Modifier le superviseur"
+msgid "Edit supervisor"
+msgstr "Modifier le superviseur"
 
 #~ msgid "Accept residual risk"
 #~ msgstr "Accepter le risque résiduel"
@@ -7506,9 +7549,6 @@ msgstr "Campagne"
 msgid "Start date"
 msgstr "Date de début"
 
-msgid "Response deadline"
-msgstr "Date limite de réponse"
-
 msgid "End date"
 msgstr "Date de fin"
 
@@ -7520,9 +7560,6 @@ msgstr "À venir"
 
 msgid "Open"
 msgstr "Ouverte"
-
-msgid "No answer"
-msgstr "Sans réponse"
 
 msgid "Closed"
 msgstr "Clôturée"
@@ -7542,17 +7579,11 @@ msgstr "Participation"
 msgid "Participate"
 msgstr "Participer"
 
-msgid "Participating"
-msgstr "Participe"
-
 msgid "Create the analysis"
 msgstr "Créer l'analyse"
 
 msgid "Open the analysis"
 msgstr "Ouvrir l'analyse"
-
-msgid "Do you want to participate in this campaign?"
-msgstr "Voulez-vous participer à cette campagne ?"
 
 msgid "An analysis based on the campaign model will be created. You cannot withdraw afterwards."
 msgstr "Une analyse basée sur le modèle de la campagne sera créée. Vous ne pourrez plus vous retirer."
@@ -7590,14 +7621,8 @@ msgstr "Rapports"
 msgid "Reports sent to the BackOffice"
 msgstr "Rapports envoyés au BackOffice"
 
-msgid "Sending generates the report from the analysis as it is now. Each sending is a new version; the previous ones are kept."
-msgstr "L'envoi génère le rapport à partir de l'analyse dans son état actuel. Chaque envoi crée une nouvelle version ; les précédentes sont conservées."
-
 msgid "No report has been sent yet."
 msgstr "Aucun rapport n'a encore été envoyé."
-
-msgid "Send a new version"
-msgstr "Envoyer une nouvelle version"
 
 msgid "Version {{version}} of the report has been sent to the BackOffice."
 msgstr "La version {{version}} du rapport a été envoyée au BackOffice."
@@ -7641,9 +7666,6 @@ msgstr "Cette analyse appartient à une campagne : les échelles, la base de con
 msgid "The campaign is closed: this analysis can no longer be modified."
 msgstr "La campagne est clôturée : cette analyse n'est plus modifiable."
 
-msgid "Invited"
-msgstr "Invitée"
-
 msgid "Send a report"
 msgstr "Envoyer un rapport"
 
@@ -7676,3 +7698,21 @@ msgstr "valable jusqu'à"
 
 msgid "Discard"
 msgstr "Abandonner"
+
+msgid "Back to the campaigns"
+msgstr "Retour aux campagnes"
+
+msgid "Loading the campaign..."
+msgstr "Chargement de la campagne..."
+
+msgid "The BackOffice could not be reached: the campaign shown is the last one received."
+msgstr "Le BackOffice n'a pas pu être joint : la campagne affichée est la dernière reçue."
+
+msgid "Electronic signature required"
+msgstr "Signature électronique requise"
+
+msgid "Latest version"
+msgstr "Dernière version"
+
+msgid "Appreciation of the BackOffice"
+msgstr "Appréciation du BackOffice"

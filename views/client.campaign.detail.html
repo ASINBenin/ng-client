@@ -1,0 +1,73 @@
+<md-card md-theme="light" layout="column" class="main-card campaigns-mgmt" ng-controller="ClientCampaignDetailCtrl">
+    <div layout="row" layout-align="start center" class="campaigns-filters">
+        <md-button class="md-icon-button" ui-sref="main.campaigns" aria-label="{{ 'Back to the campaigns' | translate }}" style="margin: 0;">
+            <md-tooltip md-direction="bottom">{{ 'Back to the campaigns' | translate }}</md-tooltip>
+            <md-icon>arrow_back</md-icon>
+        </md-button>
+        <div flex layout="column" class="campaign-detail-title">
+            <h2 class="md-title">{{ campaign.label }}</h2>
+            <span ng-if="campaign.isSignatureRequired" class="campaign-detail-chip">
+                <md-icon>verified_user</md-icon>{{ 'Electronic signature required' | translate }}
+            </span>
+        </div>
+        <span ng-if="campaign" ng-include="'views/campaign.progress.html'"></span>
+        <md-button class="md-icon-button md-primary" ng-click="loadCampaign()" ng-disabled="isLoading" aria-label="{{ 'Refresh' | translate }}" style="margin: 0;">
+            <md-tooltip md-direction="bottom">{{ 'Refresh' | translate }}</md-tooltip>
+            <md-icon>refresh</md-icon>
+        </md-button>
+    </div>
+
+    <md-card-content ng-if="synchronization === 'failed'">
+        <md-icon class="analysis-review-warning">warning</md-icon>
+        <span translate>The BackOffice could not be reached: the campaign shown is the last one received.</span>
+    </md-card-content>
+
+    <div layout="column" layout-align="center center" ng-if="isLoading && !campaign" class="campaigns-state">
+        <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+        <span class="campaigns-state-text" translate>Loading the campaign...</span>
+    </div>
+    <md-progress-linear ng-if="isLoading && campaign" md-mode="indeterminate"></md-progress-linear>
+
+    <div ng-if="campaign" layout="column" class="campaign-page">
+        <section class="campaign-section">
+            <h3 class="campaign-section-title"><md-icon>flag</md-icon>{{ 'Campaign' | translate }}</h3>
+
+            <div layout="row" layout-wrap class="campaign-detail-facts">
+                <div class="campaign-detail-fact">
+                    <div class="md-caption" translate>Start date</div>
+                    <div>{{ campaign.startDate | date:'dd/MM/yyyy' }}</div>
+                </div>
+                <div class="campaign-detail-fact">
+                    <div class="md-caption" translate>Expected start date</div>
+                    <div>{{ campaign.responseDeadline | date:'dd/MM/yyyy' }}</div>
+                </div>
+                <div class="campaign-detail-fact">
+                    <div class="md-caption" translate>End date</div>
+                    <div>{{ campaign.endDate | date:'dd/MM/yyyy' }}</div>
+                </div>
+            </div>
+
+            <div class="campaign-detail-description" ng-if="campaign.description">{{ campaign.description }}</div>
+
+            <!-- Les actions dépendent de l'avancement : participer, puis travailler dans l'analyse -->
+            <div layout="row" layout-wrap layout-align="start center" class="campaign-detail-actions">
+                <md-button class="md-primary md-raised" ng-if="canParticipate(campaign)"
+                           ng-disabled="campaign.isSaving" ng-click="participate($event)">
+                    {{ (campaign.participationStatus === 'invited' ? 'Participate' : 'Create the analysis') | translate }}
+                </md-button>
+                <md-button class="md-primary md-raised" ng-if="campaign.anrId" ui-sref="main.project.anr({modelId: campaign.anrId})">
+                    <md-icon>folder_open</md-icon> {{ 'Open the analysis' | translate }}
+                </md-button>
+                <md-button class="md-primary campaign-button-outlined" ng-if="campaign.anrId" ng-click="manageAccess($event)">
+                    <md-icon>people</md-icon> {{ 'Manage access' | translate }}
+                </md-button>
+            </div>
+        </section>
+
+        <section class="campaign-section" ng-if="campaign.anrId && !isLoading">
+            <h3 class="campaign-section-title"><md-icon>assignment</md-icon>{{ 'Reports sent to the BackOffice' | translate }}</h3>
+            <campaign-reports anr="reportsAnr" can-submit="campaign.status !== 'closed'"
+                              requires-signature="campaign.isSignatureRequired"></campaign-reports>
+        </section>
+    </div>
+</md-card>

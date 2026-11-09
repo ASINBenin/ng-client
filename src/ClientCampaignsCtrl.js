@@ -3,275 +3,93 @@
     angular
         .module('ClientApp')
         .controller('ClientCampaignsCtrl', [
-            '$scope', '$rootScope', '$mdDialog', 'gettextCatalog', 'toastr', 'ClientCampaignsService',
-            'ClientAnrService', 'DownloadService', ClientCampaignsCtrl
+            '$scope', '$state', '$stateParams', '$mdDialog', 'ClientCampaignsService', 'ClientAnrService',
+            ClientCampaignsCtrl
         ]);
 
     /**
-     * Campaigns the entity is invited to, received from the BackOffice.
+     * Campaigns the entity is invited to, received from the BackOffice. A campaign is handled in its own page.
      */
-    function ClientCampaignsCtrl($scope, $rootScope, $mdDialog, gettextCatalog, toastr, ClientCampaignsService,
-                                 ClientAnrService, DownloadService) {
+    function ClientCampaignsCtrl($scope, $state, $stateParams, $mdDialog, ClientCampaignsService, ClientAnrService) {
         $scope.campaigns = [];
         $scope.freeAnrs = [];
         $scope.synchronization = 'ok';
         $scope.isLoading = true;
+        $scope.filters = {search: '', progress: 'all'};
+        $scope.getProgress = ClientCampaignsService.getProgress;
 
-        var today = moment().format('YYYY-MM-DD');
-
-        /**
-         * Where the campaign stands today: closed, upcoming, open, or past its response deadline with no answer.
-         */
-        $scope.getPhase = function (campaign) {
-            if (campaign.status === 'closed') {
-                return 'closed';
-            }
-            if (today < campaign.startDate) {
-                return 'upcoming';
-            }
-            if (today > campaign.responseDeadline && campaign.participationStatus === 'invited') {
-                return 'noAnswer';
-            }
-
-            return 'open';
-        };
-
-        /**
-         * The entity has not answered yet, or answered but its analysis is missing (the creation failed).
-         */
-        $scope.canParticipate = function (campaign) {
-            return $scope.getPhase(campaign) === 'open'
-                && (campaign.participationStatus === 'invited' || !campaign.anrId);
-        };
-
-        $scope.participate = function (campaign, ev) {
-            if (campaign.participationStatus !== 'invited') {
-                saveParticipation(campaign);
-                return;
-            }
-
-            var confirm = $mdDialog.confirm()
-                .title(gettextCatalog.getString('Do you want to participate in this campaign?'))
-                .textContent(gettextCatalog.getString(
-                    'An analysis based on the campaign model will be created. You cannot withdraw afterwards.'
-                ))
-                .targetEvent(ev)
-                .theme('light')
-                .ok(gettextCatalog.getString('Participate'))
-                .cancel(gettextCatalog.getString('Cancel'));
-            $mdDialog.show(confirm).then(function () {
-                saveParticipation(campaign);
-            });
-        };
-
-        function saveParticipation(campaign) {
-            campaign.isSaving = true;
-            ClientCampaignsService.participate(campaign.id).then(function (data) {
-                campaign.participationStatus = data.participationStatus;
-                campaign.anrId = data.anrId;
-                toastr.success(
-                    gettextCatalog.getString('Your analysis has been created.'),
-                    gettextCatalog.getString('Participation recorded')
-                );
-                $rootScope.$broadcast('fo-anr-changed');
-                $scope.manageAccess(campaign);
-            }).finally(function () {
-                campaign.isSaving = false;
-            });
+        function matchesSearch(label) {
+            return (label || '').toLowerCase().indexOf($scope.filters.search.toLowerCase().trim()) !== -1;
         }
 
-        /**
-         * The administrator chooses who else can open the analysis of the campaign.
-         */
-        $scope.manageAccess = function (campaign, ev) {
-            $mdDialog.show({
-                controller: ['$scope', '$mdDialog', 'campaign', CampaignAccessDialogCtrl],
-                templateUrl: 'views/dialogs/campaign.access.html',
-                targetEvent: ev,
-                locals: {campaign: campaign},
-                clickOutsideToClose: false
-            });
+        $scope.filterCampaigns = function (campaign) {
+            return matchesSearch(campaign.label)
+                && ($scope.filters.progress === 'all' || $scope.getProgress(campaign) === $scope.filters.progress);
         };
 
-        function CampaignAccessDialogCtrl($scope, $mdDialog, campaign) {
-            $scope.campaign = campaign;
-            $scope.users = [];
-            $scope.isLoading = true;
-            $scope.isSaving = false;
+        $scope.filterAnrs = function (anr) {
+            return matchesSearch(anr.label);
+        };
 
-            ClientCampaignsService.getAccess(campaign.id).then(function (data) {
-                $scope.users = data.users.map(function (user) {
-                    user.access = user.rwd === null ? 'none' : (user.rwd === 1 ? 'write' : 'read');
-                    return user;
-                });
-            }).finally(function () {
-                $scope.isLoading = false;
-            });
-
-            $scope.cancel = function () {
-                $mdDialog.cancel();
-            };
-
-            $scope.save = function () {
-                var accesses = $scope.users.filter(function (user) {
-                    return user.access !== 'none';
-                }).map(function (user) {
-                    return {userId: user.id, rwd: user.access === 'write' ? 1 : 0};
-                });
-
-                $scope.isSaving = true;
-                ClientCampaignsService.setAccess(campaign.id, accesses).then(function () {
-                    toastr.success(gettextCatalog.getString('The access to the analysis has been updated.'));
-                    $mdDialog.hide();
-                }).finally(function () {
-                    $scope.isSaving = false;
-                });
-            };
-        }
+        $scope.openCampaign = function (campaign) {
+            $state.go('main.campaigns.detail', {campaignId: campaign.id});
+        };
 
         /**
-         * History of the reports sent to the BackOffice for an analysis, and sending of a new version.
-         * Reports can be sent while the campaign is open; an analysis outside any campaign needs write access.
+         * Reports of an analysis outside any campaign: it needs write access to send one.
          */
-        $scope.showReports = function (anr, canSubmit, requiresSignature, ev) {
+        $scope.showReports = function (anr, ev) {
             $mdDialog.show({
-                controller: ['$scope', '$mdDialog', '$window', 'anr', 'canSubmit', 'requiresSignature', ReportsDialogCtrl],
+                controller: ['$scope', '$mdDialog', 'anr', function ($scope, $mdDialog, anr) {
+                    $scope.anr = anr;
+                    $scope.canSubmit = anr.rwd === 1;
+                    $scope.requiresSignature = false;
+                    $scope.close = function () {
+                        $mdDialog.hide();
+                    };
+                }],
                 templateUrl: 'views/dialogs/campaign.reports.html',
                 targetEvent: ev,
-                locals: {anr: anr, canSubmit: canSubmit, requiresSignature: requiresSignature},
+                locals: {anr: anr},
                 clickOutsideToClose: false
             });
         };
 
-        function ReportsDialogCtrl($scope, $mdDialog, $window, anr, canSubmit, requiresSignature) {
-            $scope.anr = anr;
-            $scope.canSubmit = canSubmit;
-            $scope.requiresSignature = requiresSignature;
-            $scope.submissions = [];
-            $scope.signedReports = [];
-            $scope.preparedReport = null;
-            $scope.synchronization = 'ok';
+        $scope.loadData = function () {
             $scope.isLoading = true;
-            $scope.isPreparing = false;
-            $scope.isSending = false;
+            ClientAnrService.getAnrs().then(function (data) {
+                $scope.freeAnrs = data.anrs.filter(function (anr) {
+                    return anr.rwd >= 0 && !anr.campaignLocked;
+                });
+            });
 
-            ClientCampaignsService.getSubmissions(anr.id).then(function (data) {
-                $scope.submissions = data.submissions;
+            ClientCampaignsService.getCampaigns().then(function (data) {
+                $scope.campaigns = data.campaigns;
                 $scope.synchronization = data.synchronization;
+                openLinkedCampaign();
             }).finally(function () {
                 $scope.isLoading = false;
             });
-            if (canSubmit) {
-                ClientCampaignsService.getSignedReports(anr.id).then(function (data) {
-                    $scope.signedReports = data.signedReports;
-                });
-                if (!requiresSignature) {
-                    // A report prepared earlier and not yet sent is still valid for an hour
-                    ClientCampaignsService.getPreparedReport(anr.id).then(function (data) {
-                        $scope.preparedReport = data.preparedReport;
-                    });
-                }
+        };
+
+        /**
+         * The mails of the BackOffice link to "campaigns?campaign=<BackOffice id>": the campaign is known here
+         * only once synchronized, then its page opens.
+         */
+        function openLinkedCampaign() {
+            if (!$stateParams.campaign) {
+                return;
             }
-
-            $scope.formatSize = function (bytes) {
-                return bytes >= 1048576 ? (bytes / 1048576).toFixed(1) + ' MB' : Math.ceil(bytes / 1024) + ' KB';
-            };
-
-            $scope.close = function () {
-                $mdDialog.hide();
-            };
-
-            /**
-             * Opens a PDF of the server in a new tab. The tab is opened at once, from the click, then receives the
-             * file: this way the browser does not take it for an unwanted popup.
-             */
-            function openPdf(path) {
-                var tab = $window.open('', '_blank');
-                ClientCampaignsService.getPdfUrl(path).then(function (url) {
-                    if (tab) {
-                        tab.location.href = url;
-                    } else {
-                        $window.location.href = url;
-                    }
-                }, function () {
-                    if (tab) {
-                        tab.close();
-                    }
-                });
+            var boCampaignId = parseInt($stateParams.campaign, 10);
+            var linked = $scope.campaigns.filter(function (campaign) {
+                return campaign.boCampaignId === boCampaignId;
+            })[0];
+            if (linked) {
+                $state.go('main.campaigns.detail', {campaignId: linked.id}, {location: 'replace'});
             }
-
-            $scope.prepare = function () {
-                $scope.isPreparing = true;
-                ClientCampaignsService.prepareReport(anr.id).then(function (data) {
-                    $scope.preparedReport = data.preparedReport;
-                }).finally(function () {
-                    $scope.isPreparing = false;
-                });
-            };
-
-            $scope.readPrepared = function () {
-                openPdf('api/client-anr/' + anr.id + '/prepared-reports/' + $scope.preparedReport.token);
-            };
-
-            $scope.discardPrepared = function () {
-                ClientCampaignsService.discardPreparedReport(anr.id, $scope.preparedReport.token).then(function () {
-                    $scope.preparedReport = null;
-                });
-            };
-
-            function downloadPdf(path, fileName) {
-                ClientCampaignsService.getPdf(path).then(function (data) {
-                    DownloadService.downloadBlob(data, fileName, 'application/pdf');
-                });
-            }
-
-            $scope.downloadPrepared = function () {
-                downloadPdf('api/client-anr/' + anr.id + '/prepared-reports/' + $scope.preparedReport.token, 'rapport.pdf');
-            };
-
-            $scope.downloadSigned = function (signedReport) {
-                downloadPdf('api/client-anr/' + anr.id + '/signed-reports/' + signedReport.id, 'rapport-signe.pdf');
-            };
-
-            $scope.readSigned = function (signedReport) {
-                openPdf('api/client-anr/' + anr.id + '/signed-reports/' + signedReport.id);
-            };
-
-            function submit(data) {
-                $scope.isSending = true;
-                ClientCampaignsService.submitReport(anr.id, data).then(function (response) {
-                    $scope.submissions.unshift(response.submission);
-                    $scope.preparedReport = null;
-                    toastr.success(gettextCatalog.getString(
-                        'Version {{version}} of the report has been sent to the BackOffice.',
-                        {version: response.submission.version}
-                    ));
-                }).finally(function () {
-                    $scope.isSending = false;
-                });
-            }
-
-            $scope.submitPrepared = function () {
-                submit({token: $scope.preparedReport.token});
-            };
-
-            $scope.submitSigned = function (signedReport) {
-                submit({signatureRequestId: signedReport.id});
-            };
         }
 
-        ClientAnrService.getAnrs().then(function (data) {
-            $scope.freeAnrs = data.anrs.filter(function (anr) {
-                return anr.rwd >= 0 && !anr.campaignLocked;
-            });
-        });
-
-        ClientCampaignsService.getCampaigns().then(function (data) {
-            $scope.campaigns = data.campaigns;
-            $scope.synchronization = data.synchronization;
-        }).finally(function () {
-            $scope.isLoading = false;
-        });
+        $scope.loadData();
     }
 
 })();

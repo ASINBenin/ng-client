@@ -201,3 +201,340 @@ table.md-table.campaigns-table:not(.md-row-select) th.md-column:first-child,
 table.md-table.campaigns-table:not(.md-row-select) td.md-cell:first-child {
   padding-right: 24px;
 }
+
+/* Page des campagnes : mêmes filtres, états et boutons que la page des signatures */
+.campaigns-mgmt .campaigns-filters {
+  padding: 14px 16px 12px 16px;
+}
+
+.campaigns-mgmt .campaigns-progress-select {
+  font-size: 13px;
+  margin: 0 12px 0 0;
+  min-width: 190px;
+}
+
+.campaigns-mgmt .campaigns-state {
+  padding: 60px 16px;
+  text-align: center;
+}
+
+.campaigns-mgmt .campaigns-state-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: #94a3b8;
+  margin-bottom: 12px;
+}
+
+.campaigns-mgmt .campaigns-state-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #334155;
+  margin: 0;
+}
+
+.campaigns-mgmt .campaigns-state-text {
+  font-size: 13px;
+  color: #64748b;
+  margin-top: 12px;
+}
+
+.campaigns-mgmt .campaigns-hint {
+  font-size: 12px;
+  color: #64748b;
+  margin: 12px 24px 0 24px;
+}
+
+.campaigns-mgmt .campaigns-actions {
+  gap: 2px;
+}
+
+.campaigns-mgmt .campaign-table-btn {
+  margin: 0 6px 0 0;
+  min-height: 28px;
+  height: 28px;
+  line-height: 28px;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 0 12px;
+  border-radius: 4px;
+  text-transform: none;
+}
+
+/* Le thème Angular Material, injecté après cette feuille, l'emporterait sans !important */
+.campaigns-mgmt .campaign-table-btn.md-primary:not([disabled]) {
+  background-color: #006fba !important;
+  color: #ffffff !important;
+}
+
+.campaigns-mgmt .campaign-table-btn.md-primary:not([disabled]):hover {
+  background-color: #005d9b !important;
+}
+
+/* Avancement de l'entité dans une campagne */
+.campaign-progress {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.campaign-progress md-icon {
+  color: inherit;
+  font-size: 13px;
+  width: 13px;
+  height: 13px;
+  min-width: 13px;
+  min-height: 13px;
+  line-height: 13px;
+  margin: 0;
+}
+
+.campaign-progress-neutral {
+  background-color: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+
+.campaign-progress-pending {
+  background-color: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+
+.campaign-progress-late {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.campaign-progress-active {
+  background-color: #dcfce7;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+/* Appreciation of the reports by the ASIN */
+.appreciation-comment {
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+}
+.appreciation-comment ul,
+.appreciation-comment ol {
+  margin: 4px 0;
+  padding-left: 24px;
+}
+.appreciation-comment h1,
+.appreciation-comment h2 {
+  font-size: 16px;
+  margin: 8px 0 4px;
+}
+.appreciation-comment h3 {
+  font-size: 14px;
+  margin: 8px 0 4px;
+}
+.appreciation-comment p {
+  margin: 0;
+}
+.appreciation-comment blockquote {
+  margin: 4px 0;
+  padding-left: 12px;
+  border-left: 3px solid #ccc;
+  color: rgba(0, 0, 0, 0.7);
+}
+.appreciation-level {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #fff;
+  white-space: nowrap;
+}
+.appreciation-level-insufficient {
+  background-color: #e53935;
+}
+.appreciation-level-to_improve {
+  background-color: #fb8c00;
+}
+.appreciation-level-satisfactory {
+  background-color: #7cb342;
+}
+.appreciation-level-very_satisfactory {
+  background-color: #2e7d32;
+}
+table.md-table tbody.md-body > tr.md-row.appreciation-row-with-comment > td.md-cell {
+  border-bottom: none;
+}
+table.md-table tbody.md-body > tr.md-row.appreciation-comment-row {
+  height: auto;
+}
+table.md-table tbody.md-body > tr.md-row.appreciation-comment-row > td.md-cell {
+  padding: 4px 24px 12px;
+}
+/* Comment of the BackOffice, framed with the colour of its level */
+.appreciation-bubble {
+  padding: 8px 12px;
+  border-left: 4px solid #9e9e9e;
+  border-radius: 0 4px 4px 0;
+  background-color: #fafafa;
+}
+.appreciation-bubble-insufficient {
+  border-left-color: #e53935;
+}
+.appreciation-bubble-to_improve {
+  border-left-color: #fb8c00;
+}
+.appreciation-bubble-satisfactory {
+  border-left-color: #7cb342;
+}
+.appreciation-bubble-very_satisfactory {
+  border-left-color: #2e7d32;
+}
+.appreciation-bubble-title {
+  margin-bottom: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+/* Reports panel: sending block, latest version, signed reports, empty state */
+.campaign-callout {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+  background-color: #fafafa;
+}
+.campaign-callout-title {
+  display: flex;
+  align-items: center;
+  margin: 0 0 8px;
+  font-size: 15px;
+  font-weight: 500;
+}
+.campaign-callout-title md-icon {
+  color: rgba(0, 0, 0, 0.54);
+  margin: 0 8px 0 0;
+}
+.campaign-callout-info {
+  padding: 8px 12px;
+  border-radius: 4px;
+  background-color: #fff;
+}
+.campaign-callout-info md-icon {
+  color: rgba(0, 0, 0, 0.54);
+  margin: 0 12px 0 0;
+}
+.campaign-report-latest {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 8px;
+  border-radius: 10px;
+  background-color: #1e88e5;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+table.md-table tbody.md-body > tr.md-row.campaign-report-old > td.md-cell {
+  color: rgba(0, 0, 0, 0.54);
+}
+.campaign-report-signed {
+  color: #2e7d32;
+}
+.campaign-reports-empty {
+  padding: 16px 0;
+  color: rgba(0, 0, 0, 0.54);
+}
+.campaign-reports-empty md-icon {
+  color: rgba(0, 0, 0, 0.38);
+  margin: 0 12px 0 0;
+}
+
+/* Campaign page */
+.campaigns-mgmt .campaign-row {
+  cursor: pointer;
+}
+.campaigns-mgmt .campaign-row:hover,
+.campaigns-mgmt .campaign-row:focus {
+  background-color: #f5f5f5;
+  outline: none;
+}
+.campaign-detail-title {
+  margin: 0 12px;
+}
+.campaign-detail-title h2 {
+  margin: 0;
+}
+.campaign-detail-chip {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  margin-top: 4px;
+  padding: 2px 10px 2px 6px;
+  border-radius: 12px;
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  font-size: 12px;
+  font-weight: 500;
+}
+.campaign-detail-chip md-icon {
+  color: #2e7d32;
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  min-height: 16px;
+  margin: 0 4px 0 0;
+}
+.campaign-page {
+  padding: 16px;
+  background-color: #f5f5f5;
+}
+.campaign-section {
+  margin-bottom: 16px;
+  padding: 16px 20px;
+  border-radius: 4px;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+.campaign-section:last-child {
+  margin-bottom: 0;
+}
+.campaign-section-title {
+  display: flex;
+  align-items: center;
+  margin: 0 0 16px;
+  font-size: 16px;
+  font-weight: 500;
+}
+.campaign-section-title md-icon {
+  color: #1e88e5;
+  margin: 0 8px 0 0;
+}
+
+.campaign-detail-facts {
+  margin-bottom: 16px;
+}
+.campaign-detail-fact {
+  min-width: 180px;
+  margin: 0 24px 8px 0;
+}
+.campaign-button-outlined {
+  border: 1px solid currentColor;
+}
+
+.campaign-detail-description {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+.campaign-detail-actions .md-button {
+  margin-left: 0;
+}
