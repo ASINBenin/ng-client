@@ -5407,6 +5407,11 @@ msgstr "Déclaration d'applicabilité"
 msgid "Statistics data is collected"
 msgstr "Les données statistiques sont collectées"
 
+#: views/client.project.html:62
+#: views/settings.globalDashboard.html:32
+msgid "Statistics collection is mandatory"
+msgstr "La collecte des statistiques est obligatoire"
+
 #: views/settings.globalDashboard.html:20
 msgid "Statistics data is collected or omitted"
 msgstr "Les données statistiques sont collectées ou omises"

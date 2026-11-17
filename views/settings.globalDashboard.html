@@ -29,7 +29,9 @@
                 </md-checkbox>
               </td>
               <td class="md-cell checkbox-center">
-                <md-checkbox ng-model="anr.isStatsCollected"></md-checkbox>
+                <md-checkbox ng-model="anr.isStatsCollected" ng-disabled="true" aria-label="{{ 'Statistics collection is mandatory' | translate }}">
+                  <md-tooltip>{{ 'Statistics collection is mandatory' | translate }}</md-tooltip>
+                </md-checkbox>
               </td>
             </tr>
           </tbody>

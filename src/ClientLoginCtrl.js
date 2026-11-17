@@ -153,6 +153,18 @@
       $scope.loadCaptcha();
     };
 
+    /* Colors of a provider button, from its configuration (checked by the API) */
+    $scope.ssoButtonStyle = function (provider) {
+      var display = provider.display || {};
+      var background = display.background || '#003366';
+
+      return {
+        'background-color': background,
+        color: display.color || '#ffffff',
+        border: '1px solid ' + (display.border || background)
+      };
+    };
+
     /* Fetch active SSO providers to display */
     $scope.loadSsoProviders = function () {
       $http.get('api/identity-providers').then(function (response) {

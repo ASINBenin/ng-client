@@ -229,17 +229,6 @@
         });
       };
 
-      $scope.setIsStatsCollected = function (anr) {
-        anr.isStatsCollected = !anr.isStatsCollected;
-        let data = [{
-          anrId: anr.id,
-          isVisible: anr.isVisibleOnDashboard,
-          isStatsCollected: anr.isStatsCollected
-
-        }];
-        StatsService.updateAnrSettings(null,data)
-      }
-
       $scope.setIsVisibleOnDashboard = function (anr) {
         anr.isVisibleOnDashboard = !anr.isVisibleOnDashboard;
 
