@@ -7721,3 +7721,6 @@ msgstr "Dernière version"
 
 msgid "Appreciation of the BackOffice"
 msgstr "Appréciation du BackOffice"
+
+msgid "The document will be visible when it is your turn to sign."
+msgstr "Le document sera visible quand ce sera votre tour de signer."

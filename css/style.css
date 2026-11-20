@@ -396,10 +396,26 @@ table.md-table tbody.md-body > tr.md-row.appreciation-comment-row > td.md-cell {
   border-left-color: #2e7d32;
 }
 .appreciation-bubble-title {
-  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
   font-size: 12px;
   font-weight: 500;
+  text-align: left;
   color: rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+}
+.appreciation-bubble-title md-icon {
+  margin: 0 4px 0 0;
+  color: inherit;
+}
+.appreciation-bubble-title + .appreciation-comment {
+  margin-top: 4px;
 }
 
 /* Reports panel: sending block, latest version, signed reports, empty state */

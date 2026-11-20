@@ -95,10 +95,12 @@
         <tr md-row ng-repeat-end ng-if="submission.appreciation.comment" class="appreciation-comment-row">
             <td md-cell colspan="6">
                 <div class="appreciation-bubble appreciation-bubble-{{ submission.appreciation.level }}">
-                    <div class="appreciation-bubble-title">
-                        {{ 'Appreciation of the BackOffice' | translate }}<span ng-if="submission.appreciation.appreciatedAt"> · {{ submission.appreciation.appreciatedAt | date:'dd/MM/yyyy HH:mm' }}</span>
-                    </div>
-                    <div class="appreciation-comment" ng-bind-html="submission.appreciation.comment"></div>
+                    <button type="button" class="appreciation-bubble-title" aria-expanded="{{ !submission.$commentCollapsed }}"
+                            ng-click="submission.$commentCollapsed = !submission.$commentCollapsed">
+                        <md-icon>{{ submission.$commentCollapsed ? 'expand_more' : 'expand_less' }}</md-icon>
+                        <span>{{ 'Appreciation of the BackOffice' | translate }}<span ng-if="submission.appreciation.appreciatedAt"> · {{ submission.appreciation.appreciatedAt | date:'dd/MM/yyyy HH:mm' }}</span></span>
+                    </button>
+                    <div class="appreciation-comment" ng-if="!submission.$commentCollapsed" ng-bind-html="submission.appreciation.comment"></div>
                 </div>
             </td>
         </tr>
