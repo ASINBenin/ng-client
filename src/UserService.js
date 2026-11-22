@@ -191,8 +191,11 @@
     */
     var logout = function () {
       var promise = $q.defer();
-      // Ferme d'abord la session TrustedX (jetons de signature) ; un échec ne bloque pas la déconnexion
-      $http.delete('api/sso/session').catch(angular.noop).then(function () {
+      var endSessionUrl = null;
+      // Ferme d'abord les sessions SSO (jetons TrustedX, Keycloak) ; un échec ne bloque pas la déconnexion
+      $http.delete('api/sso/session').then(function (response) {
+        endSessionUrl = response.data && response.data.endSessionUrl;
+      }).catch(angular.noop).then(function () {
         return $http.delete('auth');
       }).then(function (data) {
         localStorageService.set('permission_groups', JSON.stringify([]));
@@ -204,6 +207,10 @@
         self.permissionGroups = [];
         self.uid = null;
 
+        // Connecté par Keycloak : sa session est fermée aussi, puis il renvoie sur la page de connexion
+        if (endSessionUrl) {
+          window.location.href = endSessionUrl;
+        }
         promise.resolve(data);
       }, function (data) {
         promise.reject(data);
